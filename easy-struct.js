@@ -28,6 +28,7 @@
       'qxsckeasilystruct.setStruct':'set struct,name = [NAME] , type = [TYPE]',
       'qxsckeasilystruct.setStructList':'set struct list,name = [NAME] , type = [TYPE]',
       'qxsckeasilystruct.getStructTypeData':'[TYPE] in struct type [NAME]',
+      'qxsckeasystruct.getData':'all [TYPE]',
       'qxsckeasilystruct.deleteData':'delete [TYPE] [NAME]',
 
       'qxsckeasilystruct.checkData':'have [TYPE] [NAME] ?',
@@ -67,6 +68,7 @@
       'qxsckeasilystruct.setStruct':'设置结构体，结构体名称 = [NAME] ，结构体类型名称 = [TYPE]',
       'qxsckeasilystruct.setStructList':'设置结构体列表，结构体列表名称 = [NAME] ，结构体类型名称 = [TYPE]',
       'qxsckeasilystruct.getStructTypeData':'结构体类型 [NAME] 的 [TYPE]',
+      'qxsckeasystruct.getData':'所有 [TYPE]',
       'qxsckeasilystruct.deleteData':'删除 [TYPE] [NAME]',
 
       'qxsckeasilystruct.checkData':'存在 [TYPE] [NAME] ？',
@@ -179,6 +181,18 @@
                 type: 'string',
                 defaultValue: Scratch.translate({id: "qxsckeasilystruct.memberLength",default: "number of members"}),
                 menu: 'getStructTypeData.List',
+              },
+            },
+          },
+          {
+            opcode: "getData",
+            blockType: 'reporter',
+            text: this.formatMessage("qxsckeasystruct.getData"),
+            arguments: {
+              TYPE:{
+                type: 'string',
+                defaultValue: Scratch.translate({id: "qxsckeasystruct.structTypes",default: "struct types"}),
+                menu: 'structData.List',
               },
             },
           },
@@ -518,6 +532,12 @@
           return '['+members.map(value=>'"'+String(value)+'"').join(',')+']';
         }
       }
+    }
+    getData(args){
+      let type_=String(args.TYPE);
+      if(type_=='structTypes') return '['+Object.keys(structs).map(value=>'"'+String(value)+'"').join(',')+']';
+      else if(type_=='structs') return '['+Object.keys(useStructs).map(value=>'"'+String(value)+'"').join(',')+']';
+      else if(type_=='structLists') return '['+Object.keys(useStructLists).map(value=>'"'+String(value)+'"').join(',')+']';
     }
     deleteData(args){
       let type_=String(args.TYPE),name=String(args.NAME);
