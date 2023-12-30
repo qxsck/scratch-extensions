@@ -4,4 +4,5 @@ My scratch extensions:
 2. string manipulation
 3. data analysis
 4. variable and list
-5. easily struct
+5. extension for compatible xmw community extension
+6. easy struct
