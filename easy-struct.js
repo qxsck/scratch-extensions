@@ -187,7 +187,7 @@
           {
             opcode: "getData",
             blockType: 'reporter',
-            text: this.formatMessage("qxsckeasystruct.getData"),
+            text: Scratch.translate({id: "qxsckeasystruct.getData",default: "all [TYPE]"}),
             arguments: {
               TYPE:{
                 type: 'string',
