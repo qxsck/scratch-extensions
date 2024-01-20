@@ -20,28 +20,33 @@
       'qxsckeasystruct.clearAll':"clear all",
       'qxsckeasystruct.clearData':'clear all [TYPE]',
 
+      'qxsckeasystruct.sort.tip':'Please ensure that the sorting rule is one of ascending is "asc",\
+      descending is "desc" or not sorting is "none",the sorting type is one of string "str" for lexicographic sorting or number "num" for size sorting,\
+      wrong parameter can inevitably leading to stop sorting.',
+
       'qxsckeasystruct.setStructType':'set struct type,name = [NAME] , members = [MEMBERS]',
       'qxsckeasystruct.setStruct':'set struct,name = [NAME] , type = [TYPE]',
       'qxsckeasystruct.setStructList':'set struct list,name = [NAME] , type = [TYPE]',
       'qxsckeasystruct.getStructTypeData':'[TYPE] in struct type [NAME]',
-      'qxsckeasystruct.getData':'all [TYPE]',
+      'qxsckeasystruct.getData':'all names of [TYPE]',
       'qxsckeasystruct.deleteData':'delete [TYPE] [NAME]',
 
       'qxsckeasystruct.checkData':'have [TYPE] [NAME] ?',
       'qxsckeasystruct.checkDataMember':'[TYPE] [NAME] have member [MEMBER] ?',
 
-      'qxsckeasystruct.getStructType':'type in struct [NAME]',
+      'qxsckeasystruct.getStructType':'type of struct [NAME]',
       'qxsckeasystruct.setStructMemberData':'set member [MEMBER] in struct [NAME] to [DATA]',
       'qxsckeasystruct.getStructMember':'member [MEMBER] in struct [NAME]',
       'qxsckeasystruct.getStructMemberIndex':'item [INDEX] of members in struct [NAME]',
 
-      'qxsckeasystruct.getStructListData':'[TYPE] in struct list [NAME]',
+      'qxsckeasystruct.getStructListData':'[TYPE] of struct list [NAME]',
       'qxsckeasystruct.structListPushData':'push [NUM] none datas to struct list [NAME]',
 
       'qxsckeasystruct.setStructListMemberData':'set item [INDEX] of member [MEMBER] in struct list [NAME] to [DATA]',
       'qxsckeasystruct.getStructListMember':'item [INDEX] of member [MEMBER] in struct list [NAME]',
       'qxsckeasystruct.getStructListMemberIndex':'item [INDEX2] of the [INDEX] member in the struct list [NAME]',
       'qxsckeasystruct.deleteStructListMember':'delete item [INDEX] in struct list [NAME]',
+      'qxsckeasystruct.sortHelp':'help of struct list sorting',
       'qxsckeasystruct.structListSort':'sort struct list [NAME] with rule [RULE]',
     },
     'zh': {
@@ -59,6 +64,9 @@
 
       'qxsckeasystruct.clearAll':"清空所有数据",
       'qxsckeasystruct.clearData':'清空所有 [TYPE]',
+
+      'qxsckeasystruct.sort.tip':'请确保排序规则为升序“asc”，降序“desc”，不作排序“none”，\
+      请确保排序类型为字符串“str”以进行字典序排序，数字“num”以进行大小排序，参数填写错误会导致无法排序。',
 
       'qxsckeasystruct.setStructType':'设置结构体类型，类型名称 = [NAME] ，成员 = [MEMBERS]',
       'qxsckeasystruct.setStruct':'设置结构体，结构体名称 = [NAME] ，结构体类型名称 = [TYPE]',
@@ -82,6 +90,7 @@
       'qxsckeasystruct.getStructListMember':'结构体列表 [NAME] 的第 [INDEX] 项的成员 [MEMBER]',
       'qxsckeasystruct.getStructListMemberIndex':'结构体列表 [NAME] 的第 [INDEX] 项的第 [INDEX2] 个成员',
       'qxsckeasystruct.deleteStructListMember':'删除结构体列表 [NAME] 的第 [INDEX] 项',
+      'qxsckeasystruct.sortHelp':'结构体列表排序帮助',
       'qxsckeasystruct.structListSort':'使用规则 [RULE] 排序结构体列表 [NAME]',
     },
   });
@@ -449,6 +458,13 @@
             },
           },
           {
+            opcode: "sortHelp",
+            blockType: 'reporter',
+            text: Scratch.translate({id: "qxsckeasystruct.sortHelp",default: 'help of struct list sorting'}),
+            arguments: {},
+            disableMonitor: true,
+          },
+          {
             opcode: "structListSort",
             blockType: 'command',
             text: Scratch.translate({id: "qxsckeasystruct.structListSort",default: "sort struct list [NAME] with rule [RULE]"}),
@@ -697,7 +713,9 @@
           this.useStructLists[name]['data'].splice(index-1, 1);
     }
     sortHelp(){
-      return this.formatMessage("qxsckeasystruct.sort.tip");
+      return Scratch.translate({id: "qxsckeasystruct.sort.tip",default: 'Please ensure that the sorting rule is one of ascending is "asc",\
+        descending is "desc" or not sorting is "none",the sorting type is one of string "str" for lexicographic sorting or number "num" for size sorting,\
+        wrong parameter can inevitably leading to stop sorting.'});
     }
     structListSort(args){
       let name=String(args.NAME),rule_arr=String(args.RULE).split(" ");
