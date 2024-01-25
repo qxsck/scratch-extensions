@@ -1,3 +1,26 @@
+let i10ndefaultValue={
+  'qxsckdataanalysis.name': 'data analysis',
+  'qxsckdataanalysis.average': 'average of [NUMBERS]',
+  'qxsckdataanalysis.maximum': 'maximum of [NUMBERS]',
+  'qxsckdataanalysis.minimum': 'minimum of [NUMBERS]',
+  'qxsckdataanalysis.median': 'median of [NUMBERS]',
+  'qxsckdataanalysis.mode': 'mode of [NUMBERS]',
+  'qxsckdataanalysis.variance': 'variance of [NUMBERS]',
+  'qxsckdataanalysis.standardDeviation': 'standard deviation of [NUMBERS]',
+  'qxsckdataanalysis.countNumebrs':'[TYPE] for each datas in [NUMBERS]',
+  'qxsckdataanalysis.averageInList': 'average of list [NUMBERS]',
+  'qxsckdataanalysis.maximumInList': 'maximum of list [NUMBERS]',
+  'qxsckdataanalysis.minimumInList': 'minimum of list [NUMBERS]',
+  'qxsckdataanalysis.medianInList': 'median of list [NUMBERS]',
+  'qxsckdataanalysis.modeInList': 'mode of list [NUMBERS]',
+  'qxsckdataanalysis.varianceInList': 'variance of list [NUMBERS]',
+  'qxsckdataanalysis.standardDeviationInList': 'standard deviation of list [NUMBERS]',
+  'qxsckdataanalysis.countNumebrsInList':'[TYPE] for each datas in list [NUMBERS]',
+
+  'qxsckdataanalysis.value.count': 'count',
+  'qxsckdataanalysis.value.fre': 'frequency',
+};
+
 (function(Scratch) {
   'use strict';
   const vm = Scratch.vm;
@@ -12,6 +35,7 @@
       'qxsckdataanalysis.median': '[NUMBERS] 的中位数',
       'qxsckdataanalysis.mode': '[NUMBERS] 的众数',
       'qxsckdataanalysis.variance': '[NUMBERS] 的方差',
+      'qxsckdataanalysis.standardDeviation': '[NUMBERS] 的标准差',
       'qxsckdataanalysis.countNumebrs':'[NUMBERS] 中每个数据出现的 [TYPE]',
       'qxsckdataanalysis.averageInList': '列表 [NUMBERS] 里所有数据的平均数',
       'qxsckdataanalysis.maximumInList': '列表 [NUMBERS] 里所有数据的最大数',
@@ -19,6 +43,7 @@
       'qxsckdataanalysis.medianInList': '列表 [NUMBERS] 里所有数据的中位数',
       'qxsckdataanalysis.modeInList': '列表 [NUMBERS] 里所有数据的众数',
       'qxsckdataanalysis.varianceInList': '列表 [NUMBERS] 里所有数据的方差',
+      'qxsckdataanalysis.standardDeviationInList': '列表 [NUMBERS] 里所有数据的标准差',
       'qxsckdataanalysis.countNumebrsInList':'列表 [NUMBERS] 中每个数据出现的 [TYPE]',
 
       'qxsckdataanalysis.value.count': '次数',
@@ -28,18 +53,20 @@
       'qxsckdataanalysis.name': 'data analysis',
       'qxsckdataanalysis.average': 'average of [NUMBERS]',
       'qxsckdataanalysis.maximum': 'maximum of [NUMBERS]',
-      'qxsckdataanalysis.minimum': 'maximum of [NUMBERS]',
-      'qxsckdataanalysis.median': 'minimum of [NUMBERS]',
+      'qxsckdataanalysis.minimum': 'minimum of [NUMBERS]',
+      'qxsckdataanalysis.median': 'median of [NUMBERS]',
       'qxsckdataanalysis.mode': 'mode of [NUMBERS]',
       'qxsckdataanalysis.variance': 'variance of [NUMBERS]',
-      'qxsckdataanalysis.countNumebrs':'the [TYPE] that each datas in [NUMBER]',
+      'qxsckdataanalysis.standardDeviation': 'standard deviation of [NUMBERS]',
+      'qxsckdataanalysis.countNumebrs':'[TYPE] for each datas in [NUMBERS]',
       'qxsckdataanalysis.averageInList': 'average of list [NUMBERS]',
       'qxsckdataanalysis.maximumInList': 'maximum of list [NUMBERS]',
       'qxsckdataanalysis.minimumInList': 'minimum of list [NUMBERS]',
       'qxsckdataanalysis.medianInList': 'median of list [NUMBERS]',
       'qxsckdataanalysis.modeInList': 'mode of list [NUMBERS]',
       'qxsckdataanalysis.varianceInList': 'variance of list [NUMBERS]',
-      'qxsckdataanalysis.countNumebrsInlist':'the [TYPE] that each datas in list [NUMBER]',
+      'qxsckdataanalysis.standardDeviationInList': 'standard deviation of list [NUMBERS]',
+      'qxsckdataanalysis.countNumebrsInList':'[TYPE] for each datas in list [NUMBERS]',
 
       'qxsckdataanalysis.value.count': 'count',
       'qxsckdataanalysis.value.fre': 'frequency',
@@ -47,6 +74,96 @@
   });
 
   class dataAnalysis {
+    constructor(){
+      this.formatMessage=function(id){
+        return Scratch.translate({id: id,default: i10ndefaultValue[id]});
+      }
+      this.getData=function(numbers_,type){
+        let numbers;
+        if(type===1){
+          try{
+            let arr=JSON.parse(numbers_);
+            numbers=arr;
+          }catch(error){
+            numbers=String(numbers_).split(' ');
+          }
+        }else{
+          numbers=numbers_.value;
+        }
+        return numbers;
+      }
+      this.averageFunc=function(numbers_,type){
+        let numbers=this.getData(numbers_,type).map(Number);
+
+        let sum=numbers.reduce((a,b)=>a+b,0);
+        return sum/numbers.length;
+      }
+      this.maximumFunc=function(numbers_,type){
+        let numbers=this.getData(numbers_,type).map(Number);
+
+        return Math.max(...numbers);
+      }
+      this.minimumFunc=function(numbers_,type){
+        let numbers=this.getData(numbers_,type);
+        console.log(numbers);
+        return Math.min(...numbers);
+      }
+      this.medianFunc=function(numbers_,type){
+        let numbers=this.getData(numbers_,type).map(Number);
+
+        let sorted=numbers.sort((a,b)=>a-b);
+        let middle=Math.floor(sorted.length/2);
+        if (sorted.length%2===0) {
+          return (sorted[middle-1]+sorted[middle])/2;
+        } else {
+          return sorted[middle];
+        }
+      }
+      this.modeFunc=function(numbers_,type){
+        let numbers=this.getData(numbers_,type).map(Number);
+
+        let counts=new Map();
+        let maxCount=0;
+        let mode=0;
+        for(const number of numbers){
+          let count=counts.get(number)||0;
+          count++;
+          counts.set(number,count);
+          if(count>maxCount) maxCount=count,mode=number;
+        }
+        return mode;
+      }
+      this.varianceFunc=function(numbers_,type){
+        let numbers=this.getData(numbers_,type).map(Number);
+
+        let mean=numbers.reduce((a,b)=>a+b,0)/numbers.length;
+        let squaredDifferences=numbers.map(x=>(x-mean)**2);
+        let sum=squaredDifferences.reduce((a,b)=>a+b,0);
+        return sum/numbers.length;
+      }
+      this.standardDeviationFunc=function(numbers_,type){
+        return Math.sqrt(this.varianceFunc(numbers_,type));
+      }
+      this.countNumebrsFunc=function(numbers_,type,type_){
+        let numbers=this.getData(numbers_,type).map(String);
+
+        const counts=new Map();
+        for(const number of numbers){
+          counts.set(number,counts.get(number)+1||1);
+        }
+        let result=new Object;
+        if(type_==='count'){
+          for(const [key,value] of counts) result[String(key)]=value;
+          return JSON.stringify(result);
+        }else if(type_==='fre'){
+          let length=numbers.length;
+          for(const [key,value] of counts){
+            result[String(key)]=(Math.round((value/length)*100)/100);
+          }
+          return JSON.stringify(result);
+        }else return 0;
+      }
+    }
     getInfo() {
       return {
         id: 'qxsckdataanalysis',
@@ -59,7 +176,7 @@
           {
             opcode: 'average',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.average', default: 'average of [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.average'),
             arguments: {
               NUMBERS: {
                 type: 'string',
@@ -70,29 +187,29 @@
           {
             opcode: 'maximum',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.maximum', default: 'maximum of [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.maximum'),
             arguments: {
               NUMBERS: {
                 type: 'string',
-                defaultValue: '1 2 3 4 5'
+                defaultValue: '[1,2,3,4,5]'
               }
             }
           },
           {
             opcode: 'minimum',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.minimum', default: 'minimum of [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.minimum'),
             arguments: {
               NUMBERS: {
                 type: 'string',
-                defaultValue: '1 2 3 4 5'
+                defaultValue: '["1","2","3","4","5"]'
               }
             }
           },
           {
             opcode: 'median',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.median', default: 'median of [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.median'),
             arguments: {
               NUMBERS: {
                 type: 'string',
@@ -103,7 +220,7 @@
           {
             opcode: 'mode',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.mode', default: 'mode of [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.mode'),
             arguments: {
               NUMBERS: {
                 type: 'string',
@@ -114,7 +231,18 @@
           {
             opcode: 'variance',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.variance', default: 'variance of [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.variance'),
+            arguments: {
+              NUMBERS: {
+                type: 'string',
+                defaultValue: '1 2 3 4 5'
+              }
+            }
+          },
+          {
+            opcode: 'standardDeviation',
+            blockType: 'reporter',
+            text: this.formatMessage('qxsckdataanalysis.standardDeviation'),
             arguments: {
               NUMBERS: {
                 type: 'string',
@@ -125,7 +253,7 @@
           {
             opcode: 'countNumebrs',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.countNumebrs', default: 'the [TYPE] that each datas in [NUMBER]' }),
+            text: this.formatMessage('qxsckdataanalysis.countNumebrs'),
             arguments: {
               NUMBERS: {
                 type: 'string',
@@ -141,79 +269,91 @@
           {
             opcode: 'averageInList',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.averageInList', default: 'average of list [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.averageInList'),
             arguments: {
                 NUMBERS: {
-                  type: 'string',
-                  menu: 'listMenu'
+                    type: 'string',
+                    menu: 'listMenu'
                 }
             },
             disableMonitor: true,
           },
           {
-            opcode: 'maximumInList',
-            blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.maximumInList', default: 'maximum of list [NUMBERS]' }),
-            arguments: {
-                NUMBERS: {
-                  type: 'string',
-                  menu: 'listMenu'
-                }
-            },
-            disableMonitor: true,
-          },
-          {
-            opcode: 'minimumInList',
-            blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.minimumInList', default: 'minimum of list [NUMBERS]' }),
-            arguments: {
-                NUMBERS: {
-                  type: 'string',
-                  menu: 'listMenu'
-                }
+              opcode: 'maximumInList',
+              blockType: 'reporter',
+              text: this.formatMessage('qxsckdataanalysis.maximumInList'),
+              arguments: {
+                  NUMBERS: {
+                      type: 'string',
+                      menu: 'listMenu'
+                  }
               },
               disableMonitor: true,
           },
           {
-            opcode: 'medianInList',
-            blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.medianInList', default: 'median of list [NUMBERS]' }),
-            arguments: {
-                NUMBERS: {
-                  type: 'string',
-                  menu: 'listMenu'
-                }
-            },
-            disableMonitor: true,
+              opcode: 'minimumInList',
+              blockType: 'reporter',
+              text: this.formatMessage('qxsckdataanalysis.minimumInList'),
+              arguments: {
+                  NUMBERS: {
+                      type: 'string',
+                      menu: 'listMenu'
+                  }
+              },
+              disableMonitor: true,
           },
           {
-            opcode: 'modeInList',
-            blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.modeInList', default: 'mode of list [NUMBERS]' }),
-            arguments: {
-                NUMBERS: {
-                  type: 'string',
-                  menu: 'listMenu'
-                }
-            },
-            disableMonitor: true,
+              opcode: 'medianInList',
+              blockType: 'reporter',
+              text: this.formatMessage('qxsckdataanalysis.medianInList'),
+              arguments: {
+                  NUMBERS: {
+                      type: 'string',
+                      menu: 'listMenu'
+                  }
+              },
+              disableMonitor: true,
+          },
+          {
+              opcode: 'modeInList',
+              blockType: 'reporter',
+              text: this.formatMessage('qxsckdataanalysis.modeInList'),
+              arguments: {
+                  NUMBERS: {
+                      type: 'string',
+                      menu: 'listMenu'
+                  }
+              },
+              disableMonitor: true,
           },
           {
             opcode: 'varianceInList',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.varianceInList', default: 'variance of list [NUMBERS]' }),
+            text: this.formatMessage('qxsckdataanalysis.varianceInList'),
             arguments: {
                 NUMBERS: {
-                  type: 'string',
-                  menu: 'listMenu'
+                    type: 'string',
+                    menu: 'listMenu'
                 }
             },
             disableMonitor: true,
+        },
+        {
+          opcode: 'standardDeviationInList',
+          blockType: 'reporter',
+          text: this.formatMessage('qxsckdataanalysis.standardDeviationInList'),
+          arguments: {
+              NUMBERS: {
+                  type: 'string',
+                  menu: 'listMenu'
+              }
           },
+          disableMonitor: true,
+        },
           {
             opcode: 'countNumebrsInList',
             blockType: 'reporter',
-            text: Scratch.translate({ id: 'qxsckdataanalysis.countNumebrsInList', default: 'the [TYPE] that each datas in list [NUMBER]' }),
+            text: this.formatMessage('qxsckdataanalysis.countNumebrsInList'),
             arguments: {
               NUMBERS: {
                 type: 'string',
@@ -229,7 +369,7 @@
         ],
         menus: {
           listMenu: {
-              items: 'findAllList'
+            items: 'findAllList'
           },
           countNumebrsList:[
             {
@@ -266,179 +406,79 @@
     }
 
     average(args) {
-      const numbers = String(args.NUMBERS).split(' ').map(Number);
-      const sum = numbers.reduce((a, b) => a + b, 0);
-      return sum / numbers.length;
+      return this.averageFunc(args.NUMBERS,1);
     }
     maximum(args) {
-      const numbers = String(args.NUMBERS).split(' ').map(Number);
-      return Math.max(...numbers);
+      return this.maximumFunc(args.NUMBERS,1);
     }
     minimum(args) {
-      const numbers = String(args.NUMBERS).split(' ').map(Number);
-      return Math.min(...numbers);
+      return this.minimumFunc(args.NUMBERS,1);
     }
     median(args) {
-      const numbers = String(args.NUMBERS).split(' ').map(Number);
-      const sorted = numbers.sort((a, b) => a - b);
-      const middle = Math.floor(sorted.length / 2);
-      if (sorted.length % 2 === 0) {
-        return (sorted[middle - 1] + sorted[middle]) / 2;
-      } else {
-        return sorted[middle];
-      }
+      return this.medianFunc(args.NUMBERS,1);
     }
     mode(args) {
-      const numbers = String(args.NUMBERS).split(' ').map(Number);
-      const counts = new Map();
-      let maxCount = 0;
-      let mode = null;
-      for (const number of numbers) {
-        let count = counts.get(number) || 0;
-        count++;
-        counts.set(number, count);
-        if (count > maxCount) {
-          maxCount = count;
-          mode = number;
-        }
-      }
-      return mode;
+      return this.modeFunc(args.NUMBERS,1);
     }
     variance(args) {
-      const numbers = String(args.NUMBERS).split(' ').map(Number);
-      const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
-      const squaredDifferences = numbers.map(x => (x - mean) ** 2);
-      const sum = squaredDifferences.reduce((a, b) => a + b, 0);
-      return sum / numbers.length;
+      return this.varianceFunc(args.NUMBERS,1);
+    }
+    standardDeviation(args) {
+      return this.standardDeviationFunc(args.NUMBERS,1);
     }
     countNumebrs(args){
-      var type_=String(args.TYPE);
-      const numbers = String(args.NUMBERS).split(' ');
-      const counts = new Map();
-      for (const number of numbers) {
-        let count = counts.get(number) || 0;
-        count++;
-        counts.set(number, count);
-      }
-      var result=new Object;
-      if(type_==='count'){
-        for (const [key, value] of counts) {
-          var key1=String(key),value1=(value);
-          result[key1]=value1;
-        }
-        return JSON.stringify(result);
-      }else if(type_==='fre'){
-        var length=numbers.length;
-        for (const [key, value] of counts) {
-          var key1=String(key);
-          result[key1]=(Math.round((value/length)*100)/100);
-        }
-        return JSON.stringify(result);
-      }
-      return 0;
+      let type_=String(args.TYPE);
+      return this.countNumebrsFunc(args.NUMBERS,1,type_);
     }
 
     averageInList(args, util) {
       if(args.NUMBERS!='empty'){
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        var nums=list.value;
-        nums=nums.map(Number);
-        const sum = nums.reduce((sum, rep) => sum + rep, 0);
-        return sum / nums.length;
+        return this.averageFunc(util.target.lookupVariableById(args.NUMBERS),2);
       }
-      else return -1;
+      return -1;
     }
     maximumInList(args, util) {
       if(args.NUMBERS!='empty'){
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        var nums=list.value;
-        nums=nums.map(Number);
-        return Math.max(...nums);
+        return this.maximumFunc(util.target.lookupVariableById(args.NUMBERS),2);
       }
-      else return -1;
+      return -1;
     }
     minimumInList(args, util) {
       if(args.NUMBERS!='empty'){
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        var nums=list.value;
-        nums=nums.map(Number);
-            return Math.min(...nums);
+        return this.minimumFunc(util.target.lookupVariableById(args.NUMBERS),2);
       }
-      else return -1;
+      return -1;
     }
     medianInList(args, util) {
       if(args.NUMBERS!='empty'){
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        var nums=list.value;
-        nums=nums.map(Number);
-        const sorted = nums.sort((a, b) => a - b);
-        const middle = Math.floor(sorted.length / 2);
-        if (sorted.length % 2 === 0) return (sorted[middle - 1] + sorted[middle]) / 2;
-        else return sorted[middle];
+        return this.medianFunc(util.target.lookupVariableById(args.NUMBERS),2);
       }
-      else return -1;
+      return -1;
     }
     modeInList(args, util) {
       if(args.NUMBERS!='empty'){
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        var nums=list.value;
-        nums=nums.map(Number);
-        const counts = new Map();
-        let maxCount = 0;
-        let mode = null;
-        for (const number of nums){
-          let count = counts.get(number) || 0;
-          count++;
-          counts.set(number, count);
-          if (count > maxCount) {
-            maxCount = count;
-            mode = number;
-          }
-        }
-        return mode;
+        return this.modeFunc(util.target.lookupVariableById(args.NUMBERS),2);
       }
-      else return -1;
+      return -1;
     }
     varianceInList(args, util) {
       if(args.NUMBERS!='empty'){
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        var nums=list.value;
-        nums=nums.map(Number);
-        const mean = nums.reduce((sum, rep) => sum + rep, 0) / nums.length;
-        const squaredDifferences = nums.map(x => (x - mean) ** 2);
-        const sum2 = squaredDifferences.reduce((sum, rep) => sum + rep, 0);
-        return sum2 / nums.length;
+        return this.varianceFunc(util.target.lookupVariableById(args.NUMBERS),2);
       }
-      else return -1;
+      return -1;
+    }
+    standardDeviationInList(args,util) {
+      if(args.NUMBERS!='empty'){
+        return this.standardDeviationFunc(util.target.lookupVariableById(args.NUMBERS),2);
+      }
+      return -1;
     }
     countNumebrsInList(args,util){
       if(args.NUMBERS!='empty'){
-        var type_=String(args.TYPE);
-        const list = util.target.lookupVariableByNameAndType(String(args.NUMBERS), 'list');
-        const numbers = list.value;
-        const counts = new Map();
-        for (const number of numbers) {
-          let count = counts.get(number) || 0;
-          count++;
-          counts.set(number, count);
-        }
-        var result=new Object;
-        if(type_==='count'){
-          for (const [key, value] of counts) {
-            var key1=String(key),value1=(value);
-            result[key1]=value1;
-          }
-          return JSON.stringify(result);
-        }else if(type_==='fre'){
-          var length=numbers.length;
-          for (const [key, value] of counts) {
-            var key1=String(key);
-            result[key1]=(Math.round((value/length)*100)/100);
-          }
-          return JSON.stringify(result);
-        }
+        let type_=String(args.TYPE);
+        return this.countNumebrsFunc(util.target.lookupVariableById(args.NUMBERS),2,type_);
       }
-      return -1;
+      return '{}';
     }
   }
 
