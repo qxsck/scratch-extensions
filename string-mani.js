@@ -49,7 +49,6 @@ let i10ndefaultValue={
 Scratch.translate.setup({
   en: {
     'qxsckstrmani.name': 'String proces',
-    'qxsckstrmani.getHelp': 'Open help',
     'qxsckstrmani.length': 'Length of [STR]',
     'qxsckstrmani.reversal': 'Reverse [STR]',
     'qxsckstrmani.strPalindrome': 'Is [STR] a palindrome?',
@@ -96,7 +95,6 @@ Scratch.translate.setup({
   },
   zh: {
     'qxsckstrmani.name': '字符串处理',
-    'qxsckstrmani.getHelp': '打开帮助',
     'qxsckstrmani.length': '[STR] 的长度',
     'qxsckstrmani.reversal': '反转 [STR]',
     'qxsckstrmani.strPalindrome': '[STR] 是回文字符串吗？',
@@ -158,12 +156,8 @@ class str_mani {
       color2: '#53aae7',
       menuIconURI: 'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI3OS44IiBoZWlnaHQ9Ijc5LjgiIHZpZXdCb3g9IjAsMCw3OS44LDc5LjgiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMDAuMSwtMTQwLjEpIj48ZyBkYXRhLXBhcGVyLWRhdGE9InsmcXVvdDtpc1BhaW50aW5nTGF5ZXImcXVvdDs6dHJ1ZX0iIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2UtZGFzaGFycmF5PSIiIHN0cm9rZS1kYXNob2Zmc2V0PSIwIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6IG5vcm1hbCI+PHBhdGggZD0iTTIwMS44NSwxODBjMCwtMjEuMDY5NjYgMTcuMDgwMzQsLTM4LjE1IDM4LjE1LC0zOC4xNWMyMS4wNjk2NiwwIDM4LjE1LDE3LjA4MDM0IDM4LjE1LDM4LjE1YzAsMjEuMDY5NjYgLTE3LjA4MDM0LDM4LjE1IC0zOC4xNSwzOC4xNWMtMjEuMDY5NjYsMCAtMzguMTUsLTE3LjA4MDM0IC0zOC4xNSwtMzguMTV6IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNiMGQ1ZWUiIHN0cm9rZS13aWR0aD0iMy41IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPjxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IwZDVlZSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0yMjUuOTUzNzksMTUyLjM5NDgxYzAsMCAtMTQuNTE3OTEsMy40Nzk4NiAtMTMuNTg3NjMsMTAuMzkwNTRjMC45MzAyOSw2LjkxMDY4IDE1LjQ0NDQxLDIuNTIzMTQgMTYuMzg1MDksMTAuMzkwNTRjMC45MTY3LDcuNjY2OTMgLTEzLjcxMjI1LDguMjUwNDYgLTEzLjcxMjI1LDguMjUwNDZjMCwwIC0wLjMxODM0LC0wLjE2NzE0IC0wLjQ3NDg0LC0wLjI1NzczIi8+PGc+PHBhdGggZD0iTTIyOS42NjU5MSwxNjcuNTg2MjljNS45Njc0MiwtNC4xMjk0NyAxNS4xODA3MSwtMy41ODEyMSAxOC4yOTQyNywzLjMzMDE0IiBkYXRhLXBhcGVyLWRhdGE9InsmcXVvdDtvcmlnUm90JnF1b3Q7OjB9Ii8+PHBhdGggZD0iTTI0NC45NzgzOCwxODUuNzM4NDVjMCwwIC02LjMwOTMxLDE2LjQ1MjU4IC02Ljg2MjksNC4xMDY2Yy0wLjU1MzU4LC0xMi4zNDU5OCA1LjcxMjA1LC0yOS43NzI3OSA1LjcxMjA1LC0yOS43NzI3OSIgZGF0YS1wYXBlci1kYXRhPSJ7JnF1b3Q7b3JpZ1JvdCZxdW90OzowfSIvPjwvZz48Zz48cGF0aCBkPSJNMjUxLjk0OTcxLDIwNy42MDUxOWMwLDAgLTIuOTE3NzIsLTE2LjEyODA3IC0xLjMzNTMxLC0yMS41MTMzNWMxLjU4MjQxLC01LjM4NTI4IDEwLjUzNDEyLC05Ljc5MjI4IDEwLjUzNDEyLC05Ljc5MjI4Ii8+PHBhdGggZD0iTTI2Ny42NzY3MSwxODYuODMzNjdjMCwwIC01LjEyMDc1LDQuNTk1OTggLTcuODY1NDEsNC41MjExMmMtMi42OTQ1OCwtMC4wNzM0OSAtOC44MTExNCwtNS4yMzMyOSAtOC44MTExNCwtNS4yMzMyOSIvPjwvZz48L2c+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTNhYWU3IiBzdHJva2Utd2lkdGg9IjAuNzUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTIyNS45NTM3OSwxNTIuMzk0ODFjMCwwIC0xNC41MTc5MSwzLjQ3OTg2IC0xMy41ODc2MywxMC4zOTA1NGMwLjkzMDI5LDYuOTEwNjggMTUuNDQ0NDEsMi41MjMxNCAxNi4zODUwOSwxMC4zOTA1NGMwLjkxNjcsNy42NjY5MyAtMTMuNzEyMjUsOC4yNTA0NiAtMTMuNzEyMjUsOC4yNTA0NmMwLDAgLTAuMzE4MzQsLTAuMTY3MTQgLTAuNDc0ODQsLTAuMjU3NzMiLz48Zz48cGF0aCBkPSJNMjI5LjY2NTkxLDE2Ny41ODYyOWM1Ljk2NzQyLC00LjEyOTQ3IDE1LjE4MDcxLC0zLjU4MTIxIDE4LjI5NDI3LDMuMzMwMTQiIGRhdGEtcGFwZXItZGF0YT0ieyZxdW90O29yaWdSb3QmcXVvdDs6MH0iLz48cGF0aCBkPSJNMjQ0Ljk3ODM4LDE4NS43Mzg0NWMwLDAgLTYuMzA5MzEsMTYuNDUyNTggLTYuODYyOSw0LjEwNjZjLTAuNTUzNTgsLTEyLjM0NTk4IDUuNzEyMDUsLTI5Ljc3Mjc5IDUuNzEyMDUsLTI5Ljc3Mjc5IiBkYXRhLXBhcGVyLWRhdGE9InsmcXVvdDtvcmlnUm90JnF1b3Q7OjB9Ii8+PC9nPjxnPjxwYXRoIGQ9Ik0yNTEuOTQ5NzEsMjA3LjYwNTE5YzAsMCAtMi45MTc3MiwtMTYuMTI4MDcgLTEuMzM1MzEsLTIxLjUxMzM1YzEuNTgyNDEsLTUuMzg1MjggMTAuNTM0MTIsLTkuNzkyMjggMTAuNTM0MTIsLTkuNzkyMjgiLz48cGF0aCBkPSJNMjY3LjY3NjcxLDE4Ni44MzM2N2MwLDAgLTUuMTIwNzUsNC41OTU5OCAtNy44NjU0MSw0LjUyMTEyYy0yLjY5NDU4LC0wLjA3MzQ5IC04LjgxMTE0LC01LjIzMzI5IC04LjgxMTE0LC01LjIzMzI5Ii8+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPjwhLS1yb3RhdGlvbkNlbnRlcjozOS45MDAwMDAwMDAwMDAxMjozOS44OTk5OTk5OTk5OTk5OC0tPg==',
       blockIconURI: '',
+      docsURI:'https://learn.ccw.site/article/e6ba96d6-17a4-4f63-b5e1-126acbbb82d4',
       blocks:[
-        {
-          blockType: 'button',
-          text: this.formatMessage('qxsckstrmani.getHelp'),
-          onClick: this.getHelp
-        },
         {
           opcode: 'length',
           blockType: 'reporter',
@@ -885,10 +879,6 @@ class str_mani {
         ]
       }
     };
-  }
-
-  getHelp() {
-    window.open('https://learn.ccw.site/article/e6ba96d6-17a4-4f63-b5e1-126acbbb82d4');
   }
 
   length(args){
