@@ -771,16 +771,16 @@ class str_mani {
           arguments: {
             STR: {
               type: 'string',
-              defaultValue: 'sr'
+              defaultValue: 'sarkostr'
             },
             NUM:{
               type: 'string',
               defaultValue: '2',
             },
-            STR2:{
+            NUM2:{
               type: 'string',
-              defaultValue: 't'
-            }
+              defaultValue: '6',
+            },
           }
         },
         {
