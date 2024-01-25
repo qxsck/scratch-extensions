@@ -887,185 +887,262 @@ class str_mani {
     };
   }
 
-    length(args){
-        return args.STR.length;
+  getHelp() {
+    window.open('https://learn.ccw.site/article/e6ba96d6-17a4-4f63-b5e1-126acbbb82d4');
+  }
+
+  length(args){
+    return String(args.STR).length;
+  }
+  reversal(args){
+    let arr=String(args.STR).split('');
+    arr=arr.reverse().join("");
+    return arr;
+  }
+  strPalindrome(args){
+    let arr=String(args.STR).split('');
+    arr=arr.reverse().join("");
+    return arr===String(args.STR);
+  }
+  indexOf(args){
+    let str=String(args.STR),str2=String(args.STR2),num=Number(args.NUM);
+    if(str.indexOf(str2,num-1)!=-1) return str.indexOf(str2,num-1)+1;
+    else return -1;
+  }
+  indexOfCount(args){
+    let str=String(args.STR),str2=String(args.STR2),
+    num=Number(args.NUM),num2=Number(args.NUM2);
+    let oldlength=str.slice(0,num-1).length;
+    let str_=str.slice(num-1),strindexs=[str_.indexOf(str2)];
+    let index_=strindexs[strindexs.length-1]+1;
+    while(str_.indexOf(str2,index_)!=-1){
+      strindexs.push(str_.indexOf(str2,index_));
+      index_=strindexs[strindexs.length-1]+1;
     }
-    reversal(args){
-        var arr=args.STR.split('');
-        arr=arr.reverse().join("");
-        return arr;
+    if(strindexs.length>=num2) return strindexs[num2-1]+1+oldlength;
+    else return -1;
+  }
+  lastIndexOf(args) {
+    let str=String(args.STR),str2=String(args.STR2),num=Number(args.NUM);
+    if(str.lastIndexOf(str2,num-1)!=-1) return str.lastIndexOf(str2,num-1)+1;
+    else return -1;
+  }
+  indexOfDefault(args){
+    let str=String(args.STR),str2=String(args.STR2);
+    if(str.indexOf(str2,0)!=-1) return str.indexOf(str2,0)+1;
+    else return -1;
+  }
+  indexOfCountDefault(args){
+    let str=String(args.STR),str2=String(args.STR2),
+    num2=Number(args.NUM2);
+    let str_=str,strindexs=[str_.indexOf(str2)];
+    let index_=strindexs[strindexs.length-1]+1;
+    while(str_.indexOf(str2,index_)!=-1){
+      strindexs.push(str_.indexOf(str2,index_));
+      index_=strindexs[strindexs.length-1]+1;
     }
-    strPalindrome(args){
-        var arr=args.STR.split('');
-        arr=arr.reverse().join("");
-        return arr===args.STR;
-    }
-    indexOf(args){
-        if(args.STR.indexOf(args.STR2,Number(args.NUM)-1)!=-1) return args.STR.indexOf(args.STR2,Number(args.NUM)-1)+1;
-        else return -1;
-    }
-    lastIndexOf(args) {
-        if(args.STR.lastIndexOf(args.STR2,Number(args.NUM)-1)!=-1) return args.STR.lastIndexOf(args.STR2,Number(args.NUM)-1)+1;
-        else return -1;
-    }
-    slicetwo(args){
-        return args.STR.slice(Number(args.NUM1)-1,Number(args.NUM2));
-    }
-    sliceone(args){
-        return args.STR.slice(Number(args.NUM)-1);
-    }
-    substr(args){
-        return args.STR.substr(Number(args.NUM1)-1,Number(args.NUM2));
-    }
-    replace(args){
-        return args.STR.replace(args.STR2,args.STR3);
-    }
-    replaceAll(args){
-        return args.STR.replaceAll(args.STR2,args.STR3);
-    }
-    toUpperCase(args){
-        return args.STR.toUpperCase();
-    }
-    toLowerCase(args){
-        return args.STR.toLowerCase();
-    }
-    padStart(args){
-        return args.STR.padStart(Number(args.NUM),args.STR2);
-    }
-    padEnd(args){
-        return args.STR.padEnd(Number(args.NUM),args.STR2);
-    }
-    titleCase(args){
-        var newStr=args.STR.split(" ");
-        for(var i=0;i<newStr.length;i++){
-            newStr[i]=newStr[i].slice(0,1).toUpperCase() + newStr[i].slice(1).toLowerCase();
-        }
-        return newStr.join(" ");
-    }
-    charAt(args){
-        return args.STR.charAt(Number(args.NUM)-1);
-    }
-    includes(args){
-        return args.STR.includes(args.STR2);
-    }
-    includesNum(args) {
-        return args.STR.includes(args.STR2,Number(args.NUM));
-    }
-    startsWith(args) {
-        return args.STR.startsWith(args.STR2);
-    }
-    endsWith(args) {
-        return args.STR.endsWith(args.STR2);
-    }
-    strictlyequal(args) {
-        return args.STR===args.STR2;
-    }
-    splittojson(args) {
-        var str_=args.STR.split(args.STR2);
-        return JSON.stringify(str_);
-    }
-    split(args) {
-        var str_=args.STR.split(args.STR2);
-        return '['+str_.map(value=>'"'+String(value)+'"').join(',')+']';
-    }
-    splitid(args) {
-        var str_=args.STR.split(args.STR2);
-        var id=Number(args.ID);
-        if(id<=str_.length) return str_[id-1];
-    }
-    splitlength(args) {
-        var str_=args.STR.split(args.STR2);
-        return str_.length;
-    }
-    getStrNumInStr(args){
-      if(typeof(args.STR)!=="string" || typeof(args.STR2)!=="string") return 0;
-      if(args.STR.length<args.STR2.length) return 0;
-      let Nums=0;
-      for(let i=0;i<args.STR.length;i++){
-         let flag=true;
-         let k=i;
-         for(let n=0;n<args.STR2.length;k++,n++){
-            i++;
-            if(args.STR[k]!==args.STR2[n]) {
-               flag=false;
-               break;
-            }
-         }
-         if(flag) Nums++;
-         i--;
+    if(strindexs.length>=num2) return strindexs[num2-1]+1;
+    else return -1;
+  }
+  lastIndexOfDefault(args) {
+    let str=String(args.STR),str2=String(args.STR2);
+    if(str.lastIndexOf(str2,str.length-1)!=-1) return str.lastIndexOf(str2,str.length-1)+1;
+    else return -1;
+  }
+  slicetwo(args){
+    return String(args.STR).slice(Number(args.NUM1)-1,Number(args.NUM2));
+  }
+  sliceone(args){
+    return String(args.STR).slice(Number(args.NUM)-1);
+  }
+  substr(args){
+    return String(args.STR).substr(Number(args.NUM1)-1,Number(args.NUM2));
+  }
+  replace(args){
+    return String(args.STR).replace(String(args.STR2),String(args.STR3));
+  }
+  replaceAll(args){
+    return String(args.STR).replaceAll(String(args.STR2),String(args.STR3));
+  }
+  replacestrIndex(args){
+    let strs=String(args.STR).split(String(args.STR2));
+    let index=Number(args.INDEX);
+    let str_="";
+    for(let i=0;i<strs.length;i++){
+      str_=str_+strs[i];
+      if(i+1!=strs.length){
+        if(i+1===index) str_=str_+String(args.STR3);
+        else str_=str_+String(args.STR2);
       }
-      return Nums;
     }
-    strIsAvailable(args) {
-        var str=args.STR;
-        if(args.CLASS='1'){
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(str);
-        }else{
-            const urlRegex = /^([http,https]?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w.-]*)*\/?$/;
-            return urlRegex.test(str);
-        }
+    return str_;
+  }
+  toUpperCase(args){
+    return String(args.STR).toUpperCase();
+  }
+  toLowerCase(args){
+    return String(args.STR).toLowerCase();
+  }
+  padStart(args){
+    return String(args.STR).padStart(Number(args.NUM),String(args.STR2));
+  }
+  padEnd(args){
+    return String(args.STR).padEnd(Number(args.NUM),String(args.STR2));
+  }
+  titleCase(args){
+    let newStr=String(args.STR).split(" ");
+    for(let i=0;i<newStr.length;i++){
+      newStr[i]=newStr[i].slice(0,1).toUpperCase() + newStr[i].slice(1).toLowerCase();
     }
-    fillStart(args){
-        var str=args.STR;
-        for(var i=0;i<Number(args.NUM);i++){
-            str=args.STR2+str;
-        }
-        return str;
+    return newStr.join(" ");
+  }
+  charAt(args){
+    return String(args.STR).charAt(Number(args.NUM)-1);
+  }
+  includes(args){
+    return String(args.STR).includes(String(args.STR2));
+  }
+  includesNum(args) {
+    return String(args.STR).includes(String(args.STR2),Number(args.NUM));
+  }
+  startsWith(args) {
+    return String(args.STR).startsWith(String(args.STR2));
+  }
+  endsWith(args) {
+    return String(args.STR).endsWith(String(args.STR2));
+  }
+  strictlyequal(args) {
+    return String(args.STR)===String(args.STR2);
+  }
+  splittojson(args) {
+    let str_=String(args.STR).split(String(args.STR2));
+    return JSON.stringify(str_);
+  }
+  split(args) {
+    let str_=String(args.STR).split(String(args.STR2));
+    return '['+str_.map(value=>'"'+String(value)+'"').join(',')+']';
+  }
+  splitid(args) {
+    let str_=String(args.STR).split(String(args.STR2));
+    let id=Number(args.ID);
+    if(id<=str_.length) return str_[id-1];
+  }
+  splitlength(args) {
+    let str_=String(args.STR).split(String(args.STR2));
+    return str_.length;
+  }
+  getStrNumInStr(args){
+    let str=String(args.STR),str2=String(args.STR2);
+    if(str2==="" || str==="") return 0;
+    else if(str.indexOf(str2)===-1) return 0;
+    else{
+      let str_=str,strindexs=[str_.indexOf(str2)];
+      let index_=strindexs[strindexs.length-1]+1;
+      while(str_.indexOf(str2,index_)!=-1){
+          strindexs.push(str_.indexOf(str2,index_));
+          index_=strindexs[strindexs.length-1]+1;
+      }
+      return strindexs.length;
     }
-    fillEnd(args){
-        var str=args.STR;
-        for(var i=0;i<Number(args.NUM);i++){
-            str+=args.STR2;
-        }
-        return str;
+  }
+  strIsAvailable(args) {
+    let str=String(args.STR);
+    if(args.CLASS='1'){
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(str);
+    }else{
+      const urlRegex = /^([http,https]?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w.-]*)*\/?$/;
+      return urlRegex.test(str);
     }
-    repeatString(args){
-        var str="";
-        for(var i=0;i<Number(args.NUM);i++) str+=args.STR;
-        return str;
+  }
+  fillStart(args){
+    let str=String(args.STR);
+    for(let i=0;i<Number(args.NUM);i++) str=String(args.STR2)+str;
+    return str;
+  }
+  fillEnd(args){
+    let str=String(args.STR);
+    for(let i=0;i<Number(args.NUM);i++) str+=String(args.STR2);
+    return str;
+  }
+  repeatString(args){
+    let str="";
+    for(let i=0;i<Number(args.NUM);i++) str+=String(args.STR);
+    return str;
+  }
+  deleteSpace(args){
+    return String(args.STR).replace(/^\s+|\s+$/gm,'');
+  }
+  replaceIndex(args){
+    let str='';
+    for(let i=0;i<String(args.STR).length;i++){
+      if(i+1==Number(args.NUM)) str+=String(args.STR2);
+      else str+=String(args.STR)[i];
     }
-    deleteSpace(args){
-        return args.STR.replace(/^\s+|\s+$/gm,'');
+    return str;
+  }
+  replaceIndexs(args){
+    let str='';
+    for(let i=0;i<String(args.STR).length;i++){
+      if(i+1==Number(args.NUM)) str+=String(args.STR2);
+      else if(i+1<Number(args.NUM) || i+1>Number(args.NUM2)) str+=String(args.STR)[i];
     }
-    replaceIndex(args){
-        var str='';
-        for(var i=0;i<args.STR.length;i++){
-            if(i+1==Number(args.NUM)) str+=args.STR2;
-            else str+=args.STR[i];
-        }
-        return str;
+    return str;
+  }
+  deleteIndex(args){
+    let str='';
+    for(let i=0;i<String(args.STR).length;i++){
+      if(i+1!=Number(args.NUM)) str+=String(args.STR)[i];
     }
-    replaceIndexs(args){
-        var str='';
-        for(var i=0;i<args.STR.length;i++){
-            if(i+1==Number(args.NUM)) str+=args.STR2;
-            else if(i+1<Number(args.NUM) || i+1>Number(args.NUM2)) str+=args.STR[i];
-        }
-        return str;
+    return str;
+  }
+  deleteIndexs(args){
+    let str='';
+    for(let i=0;i<String(args.STR).length;i++){
+      if(i+1<Number(args.NUM) || i+1>Number(args.NUM2)) str+=String(args.STR)[i];
     }
-    deleteIndex(args){
-        var str='';
-        for(var i=0;i<args.STR.length;i++){
-            if(i+1!=Number(args.NUM)) str+=args.STR[i];
-        }
-        return str;
+    return str;
+  }
+  insertIndex(args){
+    let str='';
+    for(let i=0;i<String(args.STR).length;i++){
+      if(i+1==Number(args.NUM)) str+=String(args.STR2);
+      str+=String(args.STR)[i];
     }
-    deleteIndexs(args){
-        var str='';
-        for(var i=0;i<args.STR.length;i++){
-            if(i+1<Number(args.NUM) || i+1>Number(args.NUM2)) str+=args.STR[i];
-        }
-        return str;
+    return str;
+  }
+  splitStringWidth(args){
+    let str=String(args.STR),width_=Number(args.WIDTH),font_=String(args.FONT);
+    let measureText;
+    if(!measureText){
+      measureText=document.createElement("canvas");
     }
-    insertIndex(args){
-        var str='';
-        for(var i=0;i<args.STR.length;i++){
-            if(i+1==Number(args.NUM)) str+=args.STR2;
-            str+=args.STR[i];
-        }
-        return str;
+    const ctx = measureText.getContext('2d');
+    ctx.font=font_;
+    let strs=[];
+    let str_="";
+    for(let i=0;i<str.length;i++){
+      if(ctx.measureText(str_+str[i]).width>width_){
+        if(str_.length>0) strs.push(str_),str_=str[i];
+        else return '[]';
+      }else{
+        str_=str_+str[i];
+      }
     }
+    if(str_.length>0) strs.push(str_);
+    return JSON.stringify(strs);
+  }
+  splitStringLength(args){
+    let str=String(args.STR),length_=Number(args.LENGTH);
+    let strs=[];
+    let str_="";
+    for(let i=0;i<str.length;i++){
+      if(str_.length===length_) strs.push(str_),str_=str[i];
+      else str_=str_+str[i];
+    }
+    if(str_.length>0) strs.push(str_);
+    return JSON.stringify(strs);
+  }
 }
 
 Scratch.extensions.register(new str_mani());
