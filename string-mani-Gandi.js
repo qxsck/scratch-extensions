@@ -963,10 +963,10 @@ class str_mani {
   }
   includesNum(args) {
     return String(args.STR).includes(String(args.STR2),Number(args.NUM));
-}
+  }
   startsWith(args) {
     return String(args.STR).startsWith(String(args.STR2));
-}
+  }
   endsWith(args) {
     return String(args.STR).endsWith(String(args.STR2));
   }
@@ -1023,7 +1023,7 @@ class str_mani {
     let str=String(args.STR);
     for(let i=0;i<Number(args.NUM);i++) str+=String(args.STR2);
     return str;
-}
+  }
   repeatString(args){
     let str="";
     for(let i=0;i<Number(args.NUM);i++) str+=String(args.STR);
