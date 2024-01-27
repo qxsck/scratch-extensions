@@ -1,6 +1,5 @@
 let i10ndefaultValue={
   'qxsckstrmani.name': 'String proces',
-  'qxsckstrmani.getHelp': 'Open help',
   'qxsckstrmani.length': 'Length of [STR]',
   'qxsckstrmani.reversal': 'Reverse [STR]',
   'qxsckstrmani.strPalindrome': 'Is [STR] a palindrome?',
