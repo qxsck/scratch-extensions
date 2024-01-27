@@ -357,7 +357,7 @@ let openCaseSensitive=false;
               },
               LIST2: {
                 type: 'string',
-                defaultValue:'["a","a"]'
+                defaultValue:'["a","b"]'
               },
             }
           },
@@ -421,7 +421,7 @@ let openCaseSensitive=false;
               },
               LIST2: {
                 type: 'string',
-                defaultValue:'["a","a"]'
+                defaultValue:'["a","b"]'
               },
             }
           },
