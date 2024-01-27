@@ -24,7 +24,8 @@ let i10ndefaultValue={
   'qxsckvarandlist.getValueOfList': 'item # [INDEX] of list [LIST]',
   'qxsckvarandlist.seriListsToJson': 'convert all lists starting with [START] to json',
   'qxsckvarandlist.clearList': 'delete all of list [LIST]',
-  'qxsckvarandlist.setList': 'set [LIST] to list [LIST2]',
+  'qxsckvarandlist.setList': 'set list [LIST] to list [LIST2]',
+  'qxsckvarandlist.setListValue': 'set list [LIST] to [VALUE] [NUM] times',
   'qxsckvarandlist.deleteOfList': 'delete # [INDEX] of list [LIST]',
   'qxsckvarandlist.addValueInList': 'add [VALUE] to list [LIST]',
   'qxsckvarandlist.addListToList': 'add list [LIST2] to list [LIST]',
@@ -77,7 +78,8 @@ let openCaseSensitive=false;
       'qxsckvarandlist.getValueOfList': 'item # [INDEX] of list [LIST]',
       'qxsckvarandlist.seriListsToJson': 'convert all lists starting with [START] to json',
       'qxsckvarandlist.clearList': 'delete all of list [LIST]',
-      'qxsckvarandlist.setList': 'set [LIST] to list [LIST2]',
+      'qxsckvarandlist.setList': 'set list [LIST] to list [LIST2]',
+      'qxsckvarandlist.setListValue': 'set list [LIST] to [VALUE] [NUM] times',
       'qxsckvarandlist.deleteOfList': 'delete # [INDEX] of list [LIST]',
       'qxsckvarandlist.addValueInList': 'add [VALUE] to list [LIST]',
       'qxsckvarandlist.addListToList': 'add list [LIST2] to list [LIST]',
@@ -127,6 +129,7 @@ let openCaseSensitive=false;
       'qxsckvarandlist.seriListsToJson': '将以 [START] 为开头的所有列表转换为json',
       'qxsckvarandlist.clearList': '清空列表 [LIST]',
       'qxsckvarandlist.setList': '设置列表 [LIST] 的内容为列表 [LIST2]',
+      'qxsckvarandlist.setListValue': '设置列表 [LIST] 为 [NUM] 个 [VALUE]',
       'qxsckvarandlist.deleteOfList': '删除列表 [LIST] 的第 [INDEX] 项',
       'qxsckvarandlist.addValueInList': '在列表 [LIST] 末尾添加 [VALUE]',
       'qxsckvarandlist.addListToList': '在列表 [LIST] 末尾添加列表 [LIST2]',
@@ -355,6 +358,25 @@ let openCaseSensitive=false;
               LIST2: {
                 type: 'string',
                 defaultValue:'["a","a"]'
+              },
+            }
+          },
+          {
+            opcode:'setListValue',
+            blockType: 'command',
+            text: this.formatMessage('qxsckvarandlist.setListValue'),
+            arguments: {
+              LIST: {
+                type: 'string',
+                defaultValue:'list'
+              },
+              NUM: {
+                type: 'string',
+                defaultValue:'5'
+              },
+              VALUE: {
+                type: 'string',
+                defaultValue:'thing'
               },
             }
           },
@@ -723,6 +745,7 @@ let openCaseSensitive=false;
         }
       };
     }
+
     haveVar(args, util) {
       const variable = util.target.lookupVariableByNameAndType(String(args.VAR), '');
       return variable ? true : false;
@@ -836,6 +859,16 @@ let openCaseSensitive=false;
         }
       }
     }
+    setListValue(args, util) {
+      /** @type {VM.ListVariable} */
+      const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
+      if (variable) {
+        let val=String(args.VALUE),num=Number(args.NUM);
+        variable.value=[];
+        for(let i=1;i<=num;i++) variable.value.push(val);
+        variable._monitorUpToDate = false;
+      }
+    }
     deleteOfList(args, util) {
       /** @type {VM.ListVariable} */
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
@@ -863,7 +896,7 @@ let openCaseSensitive=false;
       if (variable) {
         try{
           let arr=JSON.parse(args.LIST2);
-          for(let i=0;i<arr.length;i++) variable.value.push(arr[i]);
+          for(let i=0;i<arr.length;i++) variable.value.push(String(arr[i]));
           variable._monitorUpToDate = false;
         }catch(error){
           console.log('error:', error);
@@ -872,7 +905,7 @@ let openCaseSensitive=false;
     }
     insertOfList(args,util){
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
-      const value=args.VALUE;
+      const value=String(args.VALUE);
       const index=Number(args.INDEX)>variable.value.length?variable.value.length+1:Number(args.INDEX);
       variable.value.splice(index-1,0,value);
       variable._monitorUpToDate = false;
@@ -881,7 +914,7 @@ let openCaseSensitive=false;
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
       const index=Number(args.INDEX)>variable.value.length?variable.value.length+1:Number(args.INDEX);
       try{
-        let arr=JSON.parse(args.LIST2);
+        let arr=JSON.parse(args.LIST2).map(String);
         variable.value.splice(index-1,0,...arr);
         variable._monitorUpToDate = false;
       }catch(error){
@@ -894,7 +927,7 @@ let openCaseSensitive=false;
       if (variable) {
         const index = String(args.INDEX);
         if(Number(index)<=variable.value.length && Number(index)>=1){
-          variable.value[index - 1] = args.VALUE;
+          variable.value[index-1]=String(args.VALUE);
           variable._monitorUpToDate = false;
         }
       }
@@ -907,21 +940,21 @@ let openCaseSensitive=false;
         if(left<1) left=1;
         if(right>length) right=length;
         left-=1,right-=1;
-        for(let i=left;i<=right;i++) variable.value[i]=args.VALUE;
+        for(let i=left;i<=right;i++) variable.value[i]=String(args.VALUE);
         variable._monitorUpToDate = false;
       }
     }
     getIndexOfList(args, util) {
       /** @type {VM.ListVariable} */
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
-      const value = args.VALUE;
+      const value=String(args.VALUE);
       let flag=openCaseSensitive;
       if (variable) {
-        for (let i = 0; i < variable.value.length; i++) {
+        for(let i=0;i<variable.value.length;i++){
           if(!flag){
-            if (Scratch.Cast.compare(variable.value[i], value) === 0) return i + 1;
+            if(Scratch.Cast.compare(variable.value[i],value)===0) return i + 1;
           }else{
-            if (String(variable.value[i]) === String(value)) return i + 1;
+            if(String(variable.value[i]) ==String(value)) return i + 1;
           }
         }
       }
@@ -930,51 +963,51 @@ let openCaseSensitive=false;
     getIndexesOfList(args, util) {
       /** @type {VM.ListVariable} */
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
-      const value = args.VALUE;
+      const value=String(args.VALUE);
       let flag=openCaseSensitive;
-      if (variable) {
-        let indexes = [];
-        for (let i = 0; i < variable.value.length; i++) {
+      if(variable){
+        let indexes=[];
+        for(let i=0;i<variable.value.length;i++){
           if(!flag){
-            if (Scratch.Cast.compare(variable.value[i], value) === 0) indexes.push(i + 1);
+            if(Scratch.Cast.compare(variable.value[i],value)===0) indexes.push(i + 1);
           }else{
-            if (String(variable.value[i]) === String(value)) indexes.push(i + 1);
+            if(String(variable.value[i])===String(value)) indexes.push(i + 1);
           }
         }
-        if (indexes.length > 0) return indexes.toString();
+        if(indexes.length>0) return indexes.toString();
       }
       return '';
     }
     newGetIndexesOfList(args, util) {
       /** @type {VM.ListVariable} */
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
-      const value = args.VALUE;
+      const value=String(args.VALUE);
       let flag=openCaseSensitive;
-      if (variable) {
-        let indexes = [];
-        for (let i = 0; i < variable.value.length; i++) {
+      if(variable){
+        let indexes=[];
+        for(let i=0;i<variable.value.length;i++){
           if(!flag){
-            if (Scratch.Cast.compare(variable.value[i], value) === 0) indexes.push(i + 1);
+            if(Scratch.Cast.compare(variable.value[i],value)===0) indexes.push(i + 1);
           }else{
-            if (String(variable.value[i]) === String(value)) indexes.push(i + 1);
+            if(String(variable.value[i])===String(value)) indexes.push(i + 1);
           }
         }
-        if (indexes.length > 0) return '['+indexes.map(value=>'"'+String(value)+'"').join(',')+']';
+        if(indexes.length>0) return '['+indexes.map(value=>'"'+String(value)+'"').join(',')+']';
       }
       return '[]';
     }
     getCountsOfList(args, util) {
       /** @type {VM.ListVariable} */
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
-      const value = args.VALUE;
+      const value=String(args.VALUE);
       let flag=openCaseSensitive;
-      if (variable) {
-        let indexes = [];
-        for (let i = 0; i < variable.value.length; i++) {
+      if(variable){
+        let indexes=[];
+        for(let i=0;i<variable.value.length;i++){
           if(!flag){
-            if (Scratch.Cast.compare(variable.value[i], value) === 0) indexes.push(i + 1);
+            if(Scratch.Cast.compare(variable.value[i],value)===0) indexes.push(i + 1);
           }else{
-            if (String(variable.value[i]) === String(value)) indexes.push(i + 1);
+            if(String(variable.value[i])===String(value)) indexes.push(i + 1);
           }
         }
         return indexes.length;
@@ -984,14 +1017,14 @@ let openCaseSensitive=false;
     listContains(args, util) {
       /** @type {VM.ListVariable} */
       const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
-      const value = args.VALUE;
+      const value=String(args.VALUE);
       let flag=openCaseSensitive;
       if (variable) {
-        for (let i = 0;i < variable.value.length;i++) {
+        for(let i=0;i<variable.value.length;i++){
           if(!flag){
-            if (Scratch.Cast.compare(variable.value[i], value) === 0) return true;
+            if(Scratch.Cast.compare(variable.value[i],value)===0) return true;
           }else{
-            if (String(variable.value[i]) === String(value)) return true;
+            if(String(variable.value[i])===String(value)) return false;
           }
         }
         return false;
