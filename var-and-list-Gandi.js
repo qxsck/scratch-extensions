@@ -1129,7 +1129,7 @@ window.tempExt = {
   info: {
     name: 'qxsckvarandlist.name',
     description: 'qxsckvarandlist.description',
-    extensionId: 'qxsckvarandlist1',
+    extensionId: 'qxsckvarandlist',
     iconURL: insetIcon,
     insetIconURL: Icon,
     featured: true,
