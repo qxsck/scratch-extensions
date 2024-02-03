@@ -1,15 +1,13 @@
 (function(Scratch) {
   'use strict';
-  const Icon="";
+  const Icon="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI1OS40NDMwOCIgaGVpZ2h0PSI0MS4yNTAwMiIgdmlld0JveD0iMCwwLDU5LjQ0MzA4LDQxLjI1MDAyIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjEwLjI3ODQ2LC0xNTkuMzc0OTkpIj48ZyBkYXRhLXBhcGVyLWRhdGE9InsmcXVvdDtpc1BhaW50aW5nTGF5ZXImcXVvdDs6dHJ1ZX0iIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2UtZGFzaGFycmF5PSIiIHN0cm9rZS1kYXNob2Zmc2V0PSIwIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6IG5vcm1hbCI+PGc+PHBhdGggZD0iTTIyNC4wMzQ2NSwxOTguNzUwMDFjLTYuNTYxOCwwIC0xMS44ODExOSwtNS4zMTkzOSAtMTEuODgxMTksLTExLjg4MTE5di0xMy43Mzc2M2MwLC02LjU2MTggNS4zMTkzOSwtMTEuODgxMTkgMTEuODgxMTksLTExLjg4MTE5IiBzdHJva2Utd2lkdGg9IjMuNzUiLz48cGF0aCBkPSJNMjU1Ljk2NTM1LDE2MS4yNDk5OWM2LjU2MTgsMCAxMS44ODExOSw1LjMxOTM5IDExLjg4MTE5LDExLjg4MTE5djEzLjczNzYzYzAsNi41NjE4IC01LjMxOTM5LDExLjg4MTE5IC0xMS44ODExOSwxMS44ODExOSIgZGF0YS1wYXBlci1kYXRhPSJ7JnF1b3Q7aW5kZXgmcXVvdDs6bnVsbH0iIHN0cm9rZS13aWR0aD0iMy43NSIvPjxwYXRoIGQ9Ik0yMjMuODEwMTcsMTkyLjUyMzA0Yy0yLjEyMzEsMCAtMy44NDQyMSwtMS43MjExMSAtMy44NDQyMSwtMy44NDQyMXYwYzAsLTIuMTIzMSAxLjcyMTExLC0zLjg0NDIxIDMuODQ0MjEsLTMuODQ0MjFoMTAuMzMxMzFjMi4xMjMxLDAgMy44NDQyMSwxLjcyMTExIDMuODQ0MjEsMy44NDQyMXYwYzAsMi4xMjMxIC0xLjcyMTExLDMuODQ0MjEgLTMuODQ0MjEsMy44NDQyMXoiIHN0cm9rZS13aWR0aD0iMi41Ii8+PHBhdGggZD0iTTI0NS44NTg1MiwxOTIuNTIzMDRjLTIuMTIzMSwwIC0zLjg0NDIxLC0xLjcyMTExIC0zLjg0NDIxLC0zLjg0NDIxdjBjMCwtMi4xMjMxIDEuNzIxMTEsLTMuODQ0MjEgMy44NDQyMSwtMy44NDQyMWgxMC4zMzEzMWMyLjEyMzEsMCAzLjg0NDIxLDEuNzIxMTEgMy44NDQyMSwzLjg0NDIxdjBjMCwyLjEyMzEgLTEuNzIxMTEsMy44NDQyMSAtMy44NDQyMSwzLjg0NDIxeiIgc3Ryb2tlLXdpZHRoPSIyLjUiLz48cGF0aCBkPSJNMjIzLjgxMDE3LDE3NS4xNjUzNmMtMi4xMjMxLDAgLTMuODQ0MjEsLTEuNzIxMTEgLTMuODQ0MjEsLTMuODQ0MjF2MGMwLC0yLjEyMzEgMS43MjExMSwtMy44NDQyMSAzLjg0NDIxLC0zLjg0NDIxaDEwLjMzMTMxYzIuMTIzMSwwIDMuODQ0MjEsMS43MjExMSAzLjg0NDIxLDMuODQ0MjF2MGMwLDIuMTIzMSAtMS43MjExMSwzLjg0NDIxIC0zLjg0NDIxLDMuODQ0MjF6IiBzdHJva2Utd2lkdGg9IjIuNSIvPjxwYXRoIGQ9Ik0yNDUuNjA4NTIsMTc1LjE2NTM2Yy0yLjEyMzEsMCAtMy44NDQyMSwtMS43MjExMSAtMy44NDQyMSwtMy44NDQyMXYwYzAsLTIuMTIzMSAxLjcyMTExLC0zLjg0NDIxIDMuODQ0MjEsLTMuODQ0MjFoMTAuMzMxMzFjMi4xMjMxLDAgMy44NDQyMSwxLjcyMTExIDMuODQ0MjEsMy44NDQyMXYwYzAsMi4xMjMxIC0xLjcyMTExLDMuODQ0MjEgLTMuODQ0MjEsMy44NDQyMXoiIHN0cm9rZS13aWR0aD0iMi41Ii8+PC9nPjwvZz48L2c+PC9zdmc+PCEtLXJvdGF0aW9uQ2VudGVyOjI5LjcyMTU0MDAwMDAwMDAwNToyMC42MjUwMTAwMDAwMDAwMDMtLT4=";
 
   let i10ndefaultValue={
     //qxsckmatrix
     'qxsckmatrix.name': 'Matrix',
 
     'qxsckmatrix.isAMatrix': '[ARR] is matrix?',
-    'qxsckmatrix.matrixAdd': 'matrix [ARR] + matrix [ARR2]',
-    'qxsckmatrix.matrixSub': 'matrix [ARR] -  matrix [ARR2]',
-    'qxsckmatrix.matrixMul': 'matrix [ARR] * matrix [ARR2]',
+    'qxsckmatrix.matrixOper': 'matrix [ARR] [OPER] matrix [ARR2]',
     'qxsckmatrix.matrixScalar': 'matrix [ARR] * [NUM]',
     'qxsckmatrix.matrixTranspose': 'transpose matrix [ARR]',
     'qxsckmatrix.matrixTrace': 'trace of matrix [ARR]',
@@ -20,19 +18,16 @@
       'qxsckmatrix.name': 'Matrix',
 
       'qxsckmatrix.isAMatrix': '[ARR] is matrix?',
-      'qxsckmatrix.matrixAdd': 'matrix [ARR] + matrix [ARR2]',
-      'qxsckmatrix.matrixSub': 'matrix [ARR] -  matrix [ARR2]',
-      'qxsckmatrix.matrixMul': 'matrix [ARR] * matrix [ARR2]',
+      'qxsckmatrix.matrixOper': 'matrix [ARR] [OPER] matrix [ARR2]',
       'qxsckmatrix.matrixScalar': 'matrix [ARR] * [NUM]',
       'qxsckmatrix.matrixTranspose': 'transpose matrix [ARR]',
       'qxsckmatrix.matrixTrace': 'trace of matrix [ARR]',
     },
     zh: {
       'qxsckmatrix.name': '矩阵',
+
       'qxsckmatrix.isAMatrix': '[ARR] 是矩阵吗？',
-      'qxsckmatrix.matrixAdd': '矩阵 [ARR] + 矩阵 [ARR2]',
-      'qxsckmatrix.matrixSub': '矩阵 [ARR] -  矩阵 [ARR2]',
-      'qxsckmatrix.matrixMul': '矩阵 [ARR] * 矩阵 [ARR2]',
+      'qxsckmatrix.matrixOper': '矩阵 [ARR] [OPER] 矩阵 [ARR2]',
       'qxsckmatrix.matrixScalar': '矩阵 [ARR] * [NUM]',
       'qxsckmatrix.matrixTranspose': '转置矩阵 [ARR]',
       'qxsckmatrix.matrixTrace': '矩阵 [ARR] 的迹',
@@ -154,9 +149,9 @@
             },
           },
           {
-            opcode:'matrixAdd',
+            opcode:'matrixOper',
             blockType: 'reporter',
-            text: this.formatMessage('qxsckmatrix.matrixAdd'),
+            text: this.formatMessage('qxsckmatrix.matrixOper'),
             arguments: {
               ARR: {
                 type: 'string',
@@ -166,35 +161,9 @@
                 type: 'string',
                 defaultValue:'[[1,2],[3,4]]'
               },
-            },
-          },
-          {
-            opcode:'matrixSub',
-            blockType: 'reporter',
-            text: this.formatMessage('qxsckmatrix.matrixSub'),
-            arguments: {
-              ARR: {
+              OPER: {
                 type: 'string',
-                defaultValue:'[[1,2],[3,4]]'
-              },
-              ARR2: {
-                type: 'string',
-                defaultValue:'[[2,3],[4,5]]'
-              },
-            },
-          },
-          {
-            opcode:'matrixMul',
-            blockType: 'reporter',
-            text: this.formatMessage('qxsckmatrix.matrixMul'),
-            arguments: {
-              ARR: {
-                type: 'string',
-                defaultValue:'[[1,0,2],[-1,3,1]]'
-              },
-              ARR2: {
-                type: 'string',
-                defaultValue:'[[3,1],[2,1],[1,0]]'
+                menu: 'matrixOper.List',
               },
             },
           },
@@ -235,7 +204,23 @@
               },
             },
           },
-        ]
+        ],
+        menus: {
+          'matrixOper.List':[
+            {
+              text: '+',
+              value: '+'
+            },
+            {
+              text: '-',
+              value: '-'
+            },
+            {
+              text: '*',
+              value: '*'
+            },
+          ],
+        }
       };
     }
     isAMatrix(args){
@@ -246,26 +231,13 @@
         return false;
       }
     }
-    matrixAdd(args){
+    matrixOper(args){
+      let oper=args.OPER;
       try{
         let arr=JSON.parse(args.ARR),arr2=JSON.parse(args.ARR2);
-        return JSON.stringify(this.addMatrix(arr,arr2));
-      }catch(error){
-        return '[]';
-      }
-    }
-    matrixSub(args){
-      try{
-        let arr=JSON.parse(args.ARR),arr2=JSON.parse(args.ARR2);
-        return JSON.stringify(this.subMatrix(arr,arr2));
-      }catch(error){
-        return '[]';
-      }
-    }
-    matrixMul(args){
-      try{
-        let arr=JSON.parse(args.ARR),arr2=JSON.parse(args.ARR2);
-        return JSON.stringify(this.mulMatrix(arr,arr2));
+        if(oper==='+') return JSON.stringify(this.addMatrix(arr,arr2));
+        else if(oper==='-') return JSON.stringify(this.subMatrix(arr,arr2));
+        else if(oper==='*') return JSON.stringify(this.mulMatrix(arr,arr2));
       }catch(error){
         return '[]';
       }
