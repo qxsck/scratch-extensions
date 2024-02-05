@@ -250,7 +250,7 @@
     getInfo() {
       return {
         id: 'qxsckdataanalysis',
-        name: Scratch.translate({ id: 'qxsckdataanalysis.name', default: 'Data Analysis' }),
+        name: this.formatMessage('qxsckdataanalysis.name'),
         color1: '#ff9494',
         color2: '#ff9494',
         blockIconURI: Icon,
