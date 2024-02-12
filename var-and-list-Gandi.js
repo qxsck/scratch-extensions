@@ -23,6 +23,7 @@ class VarAndList {
         'qxsckvarandlist.getVar': '变量 [VAR] 的值',
         'qxsckvarandlist.setVar': '设置变量 [VAR] 的值为 [VALUE]',
         'qxsckvarandlist.seriVarsToJson': '将以 [START] 为开头的所有变量转换为json',
+        'qxsckvarandlist.swapVar': '交换变量 [VAR] 和 [VAR2]',
 
         'qxsckvarandlist.openCaseSensitive': '[CASE] 大小写敏感',
         'qxsckvarandlist.haveList': '有列表 [LIST] 吗？',
@@ -32,6 +33,7 @@ class VarAndList {
         'qxsckvarandlist.getListRange': '列表 [LIST] 中第 [LEFT] 到 [RIGHT] 项的值',
         'qxsckvarandlist.getValueOfList': '列表 [LIST] 的第 [INDEX] 项',
         'qxsckvarandlist.seriListsToJson': '将以 [START] 为开头的所有列表转换为json',
+        'qxsckvarandlist.swapList': '交换列表 [LIST] 和 [LIST2]',
         'qxsckvarandlist.clearList': '清空列表 [LIST]',
         'qxsckvarandlist.setList': '设置列表 [LIST] 的内容为列表 [LIST2]',
         'qxsckvarandlist.setListValue': '设置列表 [LIST] 为 [NUM] 个 [VALUE]',
@@ -72,6 +74,7 @@ class VarAndList {
         'qxsckvarandlist.getVar': 'value of variable [VAR]',
         'qxsckvarandlist.setVar': 'set variable [VAR] to [VALUE]',
         'qxsckvarandlist.seriVarsToJson': 'convert all variables starting with [START] to json',
+        'qxsckvarandlist.swapVar': 'swap variable [VAR] and [VAR2]',
 
         'qxsckvarandlist.openCaseSensitive': '[CASE] case sensitive',
         'qxsckvarandlist.haveList': 'have list [LIST] ?',
@@ -81,6 +84,7 @@ class VarAndList {
         'qxsckvarandlist.getListRange': 'values of from [LEFT] to [RIGHT] in list [LIST]',
         'qxsckvarandlist.getValueOfList': 'item # [INDEX] of list [LIST]',
         'qxsckvarandlist.seriListsToJson': 'convert all lists starting with [START] to json',
+        'qxsckvarandlist.swapList': 'swap list [LIST] and [LIST2]',
         'qxsckvarandlist.clearList': 'delete all of list [LIST]',
         'qxsckvarandlist.setList': 'set list [LIST] to list [LIST2]',
         'qxsckvarandlist.setListValue': 'set list [LIST] to [VALUE] [NUM] times',
@@ -176,6 +180,21 @@ class VarAndList {
             },
           }
         },
+        {
+            opcode:'swapVar',
+            blockType: 'command',
+            text: this.formatMessage('qxsckvarandlist.swapVar'),
+            arguments: {
+              VAR: {
+                type: 'string',
+                defaultValue:'variable1'
+              },
+              VAR2: {
+                type: 'string',
+                defaultValue:'variable2'
+              },
+            }
+          },
 
         '---',
 
@@ -280,6 +299,21 @@ class VarAndList {
             },
           }
         },
+         {
+            opcode:'swapList',
+            blockType: 'command',
+            text: this.formatMessage('qxsckvarandlist.swapList'),
+            arguments: {
+              LIST: {
+                type: 'string',
+                defaultValue:'list1'
+              },
+              LIST2: {
+                type: 'string',
+                defaultValue:'list2'
+              },
+            }
+          },
         {
           opcode:'clearList',
           blockType: 'command',
@@ -751,6 +785,15 @@ class VarAndList {
     }
     return JSON.stringify(serialized);
   }
+  swapVar(args,util){
+      const variable = util.target.lookupVariableByNameAndType(String(args.VAR), '');
+      const variable2 = util.target.lookupVariableByNameAndType(String(args.VAR2), '');
+      if (variable && variable2) {
+        let value=variable.value;
+        variable.value=variable2.value;
+        variable2.value=value;
+      }
+    }
 
   openCaseSensitive(args){
     openCaseSensitive=(String(args.CASE)==='open'?true:false);
@@ -814,6 +857,17 @@ class VarAndList {
     }
     return JSON.stringify(serialized);
   }
+   swapList(args,util){
+      const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
+      const variable2 = util.target.lookupVariableByNameAndType(String(args.LIST2), 'list');
+      if (variable && variable2) {
+        let value=variable.value;
+        variable.value=variable2.value;
+        variable2.value=value;
+        variable._monitorUpToDate = false;
+        variable2._monitorUpToDate = false;
+      }
+    }
   clearList(args, util) {
     /** @type {VM.ListVariable} */
     const variable = util.target.lookupVariableByNameAndType(String(args.LIST), 'list');
