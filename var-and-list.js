@@ -12,6 +12,9 @@
     'qxsckvarandlist.desc': 'descending',
     'qxsckvarandlist.dictOrder': 'dictionary order',
 
+    'qxsckvarandlist.complete': 'complete the missing parts',
+    'qxsckvarandlist.delete': 'delete the excess parts',
+
     'qxsckvarandlist.haveVar': 'have variable [VAR] ?',
     'qxsckvarandlist.getVar': 'value of variable [VAR]',
     'qxsckvarandlist.setVar': 'set variable [VAR] to [VALUE]',
@@ -20,6 +23,7 @@
 
     'qxsckvarandlist.openCaseSensitive': '[CASE] case sensitive',
     'qxsckvarandlist.haveList': 'have list [LIST] ?',
+    'qxsckvarandlist.emptyList': 'list [LIST] is empty?',
     'qxsckvarandlist.length': 'length of list [LIST]',
     'qxsckvarandlist.getList': 'value of list [LIST]',
     'qxsckvarandlist.newGetList': 'values of list [LIST]',
@@ -46,7 +50,8 @@
     'qxsckvarandlist.reverseList': 'reverse list [LIST]',
     'qxsckvarandlist.sortList': 'sort list [LIST] with [CASE]',
     'qxsckvarandlist.sortListRange': 'sort item [LEFT] to [RIGHT] in list [LIST] with [CASE]',
-    'qxsckvarandlist.mapObject': 'map object [OBJ] to list [LIST], and key to list [LIST2]',
+    'qxsckvarandlist.mapObject': 'map object [OBJ] , keys to list [LIST], and values to list [LIST2]',
+    'qxsckvarandlist.associateList':'associate list [LIST] to keys, and [LIST2] to values, if length is different, then [DO]',
 
     'qxsckvarandlist.unSupportCompile': '⚠️Compilation not supported',
 
@@ -57,55 +62,7 @@
 
   Scratch.translate.setup({
     en: {
-      'qxsckvarandlist.name': 'variable and list',
-
-      'qxsckvarandlist.open': 'open',
-      'qxsckvarandlist.close': 'close',
-
-      'qxsckvarandlist.asc': 'ascending',
-      'qxsckvarandlist.desc': 'descending',
-      'qxsckvarandlist.dictOrder': 'dictionary order',
-
-      'qxsckvarandlist.haveVar': 'have variable [VAR] ?',
-      'qxsckvarandlist.getVar': 'value of variable [VAR]',
-      'qxsckvarandlist.setVar': 'set variable [VAR] to [VALUE]',
-      'qxsckvarandlist.seriVarsToJson': 'convert all variables starting with [START] to json',
-      'qxsckvarandlist.swapVar': 'swap variable [VAR] and [VAR2]',
-
-      'qxsckvarandlist.openCaseSensitive': '[CASE] case sensitive',
-      'qxsckvarandlist.haveList': 'have list [LIST] ?',
-      'qxsckvarandlist.length': 'length of list [LIST]',
-      'qxsckvarandlist.getList': 'value of list [LIST]',
-      'qxsckvarandlist.newGetList': 'values of list [LIST]',
-      'qxsckvarandlist.getListRange': 'values of from [LEFT] to [RIGHT] in list [LIST]',
-      'qxsckvarandlist.getValueOfList': 'item # [INDEX] of list [LIST]',
-      'qxsckvarandlist.seriListsToJson': 'convert all lists starting with [START] to json',
-      'qxsckvarandlist.swapList': 'swap list [LIST] and [LIST2]',
-      'qxsckvarandlist.clearList': 'delete all of list [LIST]',
-      'qxsckvarandlist.setList': 'set list [LIST] to list [LIST2]',
-      'qxsckvarandlist.setListValue': 'set list [LIST] to [VALUE] [NUM] times',
-      'qxsckvarandlist.deleteOfList': 'delete # [INDEX] of list [LIST]',
-      'qxsckvarandlist.addValueInList': 'add [VALUE] to list [LIST]',
-      'qxsckvarandlist.addListToList': 'add list [LIST2] to list [LIST]',
-      'qxsckvarandlist.insertOfList': 'insert [VALUE] before item # [INDEX] in the list [LIST]',
-      'qxsckvarandlist.insertListToList': 'insert list [LIST2] before item # [INDEX] in list [LIST]',
-      'qxsckvarandlist.replaceOfList': 'replace item [INDEX] of list [LIST] to [VALUE]',
-      'qxsckvarandlist.replaceRangeOfList': 'replace items [LEFT] to [RIGHT] in list [LIST] with [VALUE]',
-      'qxsckvarandlist.getIndexOfList': 'first index of [VALUE] in list [LIST]',
-      'qxsckvarandlist.getIndexesOfList': 'indexes of [VALUE] in list [LIST]',
-      'qxsckvarandlist.newGetIndexesOfList': 'indexes of  [VALUE] in list [LIST]',
-      'qxsckvarandlist.getCountsOfList': 'number of [VALUE] in list [LIST]',
-      'qxsckvarandlist.listContains': 'list [LIST] have [VALUE] ?',
-      'qxsckvarandlist.copyList': 'copy list [LIST1] to list [LIST2]',
-      'qxsckvarandlist.reverseList': 'reverse list [LIST]',
-      'qxsckvarandlist.sortList': 'sort list [LIST] with [CASE]',
-      'qxsckvarandlist.sortListRange': 'sort item [LEFT] to [RIGHT] in list [LIST] with [CASE]',
-      'qxsckvarandlist.mapObject': 'map object [OBJ] to list [LIST], and key to list [LIST2]',
-
-      'qxsckvarandlist.unSupportCompile': '⚠️Compilation not supported',
-
-      'qxsckvarandlist.forEach': '⚠️for each variable [VAR] from [LEFT] to [RIGHT]',
-      'qxsckvarandlist.forEachList': '⚠️for each variable [VAR] in value of from [LEFT] to [RIGHT] in list [LIST]',
+      ...i10ndefaultValue,
     },
     zh: {
       'qxsckvarandlist.name': '变量与列表',
@@ -117,6 +74,9 @@
       'qxsckvarandlist.desc': '降序',
       'qxsckvarandlist.dictOrder': '字典序',
 
+      'qxsckvarandlist.complete': '补全缺少部分',
+      'qxsckvarandlist.delete': '删除多余部分',
+      
       'qxsckvarandlist.haveVar': '有变量 [VAR] 吗？',
       'qxsckvarandlist.getVar': '变量 [VAR] 的值',
       'qxsckvarandlist.setVar': '设置变量 [VAR] 的值为 [VALUE]',
@@ -153,6 +113,7 @@
       'qxsckvarandlist.sortList': '以 [CASE] 排序列表 [LIST]',
       'qxsckvarandlist.sortListRange': '以 [CASE] 排序列表 [LIST] 的第 [LEFT] 到 [RIGHT] 项',
       'qxsckvarandlist.mapObject': '映射对象 [OBJ] 的值到列表 [LIST] ，键到列表 [LIST2]',
+      'qxsckvarandlist.associateList':'关联列表 [LIST] 为键，[LIST2] 为值，如果长度不同则 [DO]',
 
       'qxsckvarandlist.unSupportCompile': '⚠️不支持编译',
 
@@ -165,6 +126,16 @@
     constructor(){
       this.formatMessage=function(id){
         return Scratch.translate({id: id,default: i10ndefaultValue[id]});
+      };
+      this.randomString=function(length){
+        let stringDict=
+          'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~`!@#$%^&*()_-+={[}}|:;<,>.?/';
+        let result='';
+        for(let i=0;i<length;i++){
+          let idx=Math.floor(Math.random()*stringDict.length);
+          result+=stringDict[idx];
+        }
+        return result;
       }
     }
 
@@ -692,7 +663,7 @@
               },
               LIST: {
                 type: 'string',
-                defaultValue:'list'
+                defaultValue:'list1'
               },
               LIST2: {
                 type: 'string',
@@ -700,8 +671,25 @@
               },
             }
           },
-
-          '---',
+          {
+            opcode:'associateList',
+            blockType: 'reporter',
+            text: this.formatMessage('qxsckvarandlist.associateList'),
+            arguments: {
+              LIST: {
+                type: 'string',
+                defaultValue:'list1'
+              },
+              LIST2: {
+                type: 'string',
+                defaultValue:'list2'
+              },
+              DO: {
+                type: 'string',
+                menu:'associateList.List'
+              },
+            }
+          },
 
           {
             opcode:'unSupportCompile',
@@ -776,6 +764,16 @@
             {
               text: this.formatMessage("qxsckvarandlist.dictOrder"),
               value: 'dictOrder'
+            },
+          ],
+          'associateList.List':[
+            {
+              text: this.formatMessage("qxsckvarandlist.complete"),
+              value: 'c'
+            },
+            {
+              text: this.formatMessage("qxsckvarandlist.delete"),
+              value: 'd'
             },
           ],
         }
@@ -1166,6 +1164,24 @@
           console.log('error:', error);
         }
       }
+    }
+    associateList(args,util){
+      const list = util.target.lookupVariableByNameAndType(String(args.LIST), 'list'),
+            list2 = util.target.lookupVariableByNameAndType(String(args.LIST2), 'list');
+      if (list && list2) {
+        let object={};
+        let length=(
+          args.DO==='d'? 
+            Math.min(list.value.length,list2.value.length) :
+            Math.max(list.value.length,list2.value.length)
+        );
+        for(let i=0;i<length;i++){
+          let key=list.value.length<=i?'key'+this.randomString(10):list.value[i];
+          let val=list2.value.length<=i?'':list2.value[i];
+          object[key]=val;
+        }
+        return JSON.stringify(object);
+      }else return '{}';
     }
 
     forEach(args,util){
