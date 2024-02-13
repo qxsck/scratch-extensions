@@ -76,7 +76,7 @@
 
       'qxsckvarandlist.complete': '补全缺少部分',
       'qxsckvarandlist.delete': '删除多余部分',
-      
+
       'qxsckvarandlist.haveVar': '有变量 [VAR] 吗？',
       'qxsckvarandlist.getVar': '变量 [VAR] 的值',
       'qxsckvarandlist.setVar': '设置变量 [VAR] 的值为 [VALUE]',
@@ -1171,7 +1171,7 @@
       if (list && list2) {
         let object={};
         let length=(
-          args.DO==='d'? 
+          args.DO==='d'?
             Math.min(list.value.length,list2.value.length) :
             Math.max(list.value.length,list2.value.length)
         );
@@ -1194,9 +1194,9 @@
         }
 
         if(util.stackFrame.index<range){
-            util.stackFrame.index++;
-            variable.value=util.stackFrame.index+left-1;
-            util.startBranch(1,true);
+          util.stackFrame.index++;
+          variable.value=util.stackFrame.index+left-1;
+          util.startBranch(1,true);
         }
       }
     }
@@ -1212,9 +1212,9 @@
         }
 
         if(util.stackFrame.index<range){
-            util.stackFrame.index++;
-            variable.value=list.value[util.stackFrame.index+left-2];
-            util.startBranch(1,true);
+          util.stackFrame.index++;
+          variable.value=list.value[util.stackFrame.index+left-2];
+          util.startBranch(1,true);
         }
       }
     }
