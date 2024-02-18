@@ -45,6 +45,9 @@
   };
 
   Scratch.translate.setup({
+    en:{
+      ...i10ndefaultValue,
+    },
     zh: {
       'qxsckdataanalysis.name': '数据分析',
 
@@ -85,47 +88,6 @@
       'qxsckdataanalysis.standardDeviationInList': '列表 [NUMBERS] 里所有数据的标准差',
       'qxsckdataanalysis.countNumebrsInList':'列表 [NUMBERS] 中每个数据出现的 [TYPE]',
       'qxsckdataanalysis.binaryOperList': '列表 [NUMBERS] 与列表 [NUMBERS2] 的 [OPER]',
-    },
-    en: {
-      'qxsckdataanalysis.name': 'data analysis',
-
-      'qxsckdataanalysis.value.count': 'count',
-      'qxsckdataanalysis.value.fre': 'frequency',
-
-      'qxsckdataanalysis.tag.average': 'average',
-      'qxsckdataanalysis.tag.maximum': 'maximum',
-      'qxsckdataanalysis.tag.minimum': 'minimum',
-      'qxsckdataanalysis.tag.median': 'median',
-      'qxsckdataanalysis.tag.mode': 'mode',
-      'qxsckdataanalysis.tag.variance': 'variance',
-      'qxsckdataanalysis.tag.standardDeviation': 'standard deviation',
-
-      'qxsckdataanalysis.tag.union': 'union',
-      'qxsckdataanalysis.tag.intersection': 'intersection',
-      'qxsckdataanalysis.tag.complement': 'complement',
-      'qxsckdataanalysis.tag.symmetricDifference': 'symmetric difference',
-
-      'qxsckdataanalysis.unaryOper': '[OPER] of [NUMBERS]',
-      'qxsckdataanalysis.average': 'average of [NUMBERS]',
-      'qxsckdataanalysis.maximum': 'maximum of [NUMBERS]',
-      'qxsckdataanalysis.minimum': 'minimum of [NUMBERS]',
-      'qxsckdataanalysis.median': 'median of [NUMBERS]',
-      'qxsckdataanalysis.mode': 'mode of [NUMBERS]',
-      'qxsckdataanalysis.variance': 'variance of [NUMBERS]',
-      'qxsckdataanalysis.standardDeviation': 'standard deviation of [NUMBERS]',
-      'qxsckdataanalysis.countNumebrs':'[TYPE] for each datas in [NUMBERS]',
-      'qxsckdataanalysis.binaryOper': '[OPER] of [NUMBERS] and [NUMBERS2]',
-
-      'qxsckdataanalysis.unaryOperList': '[OPER] of list [NUMBERS]',
-      'qxsckdataanalysis.averageInList': 'average of list [NUMBERS]',
-      'qxsckdataanalysis.maximumInList': 'maximum of list [NUMBERS]',
-      'qxsckdataanalysis.minimumInList': 'minimum of list [NUMBERS]',
-      'qxsckdataanalysis.medianInList': 'median of list [NUMBERS]',
-      'qxsckdataanalysis.modeInList': 'mode of list [NUMBERS]',
-      'qxsckdataanalysis.varianceInList': 'variance of list [NUMBERS]',
-      'qxsckdataanalysis.standardDeviationInList': 'standard deviation of list [NUMBERS]',
-      'qxsckdataanalysis.countNumebrsInList':'[TYPE] for each datas in list [NUMBERS]',
-      'qxsckdataanalysis.binaryOperList': '[OPER] of list [NUMBERS] and list [NUMBERS2]',
     }
   });
 
@@ -540,11 +502,11 @@
           },
           countNumebrsList:[
             {
-              text:Scratch.translate({ id: 'qxsckdataanalysis.value.count', default: 'count' }),
+              text:this.formatMessage('qxsckdataanalysis.value.count'),
               value:'count',
             },
             {
-              text:Scratch.translate({ id: 'qxsckdataanalysis.value.fre', default: 'frequency' }),
+              text:this.formatMessage('qxsckdataanalysis.value.fre'),
               value:'fre',
             }
           ],
