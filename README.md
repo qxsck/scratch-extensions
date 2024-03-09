@@ -7,3 +7,4 @@ My scratch extensions:
 5. extension for compatible xmw community extension
 6. easy struct
 7. matrix
+8. lazy music (no English translate)
