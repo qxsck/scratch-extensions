@@ -198,6 +198,12 @@
     loadSound(args) {
       let name = Scratch.Cast.toString(args.NAME),
         url = Scratch.Cast.toString(args.URL);
+      if(this.sounds[name]){
+        const sound1 = this.sounds[name];
+        sound1["audio"].pause();
+            sound1["audio"].volume = 1;
+            sound1["audio"].currentTime = 0;
+      }
       this.sounds[name] = Object.assign({}, this.soundExample);
       const sound = this.sounds[name];
       sound["audio"] = new Audio(url);
