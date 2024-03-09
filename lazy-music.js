@@ -90,9 +90,25 @@
             },
           },
           {
+            opcode: "soundData",
+            blockType: Scratch.BlockType.REPORTER,
+            text: "音乐 [NAME] 的 [TYPE]",
+            arguments: {
+              NAME: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "sound",
+              },
+              TYPE: {
+                type: Scratch.ArgumentType.STRING,
+                menu: "type.List",
+              },
+            },
+          },
+          {
             opcode: "soundURL",
             blockType: Scratch.BlockType.REPORTER,
-            text: "获取音乐 [NAME] 的URL",
+            text: "音乐 [NAME] 的 URL",
+            hideFromPalette: true,
             arguments: {
               NAME: {
                 type: Scratch.ArgumentType.STRING,
@@ -104,6 +120,7 @@
             opcode: "soundDuration",
             blockType: Scratch.BlockType.REPORTER,
             text: "音乐 [NAME] 的总长度",
+            hideFromPalette: true,
             arguments: {
               NAME: {
                 type: Scratch.ArgumentType.STRING,
@@ -115,6 +132,7 @@
             opcode: "soundCurrentTime",
             blockType: Scratch.BlockType.REPORTER,
             text: "音乐 [NAME] 的当前播放进度",
+            hideFromPalette: true,
             arguments: {
               NAME: {
                 type: Scratch.ArgumentType.STRING,
@@ -125,7 +143,8 @@
           {
             opcode: "getSoundVolume",
             blockType: Scratch.BlockType.REPORTER,
-            text: "获取音乐 [NAME] 的音量",
+            text: "音乐 [NAME] 的音量",
+            hideFromPalette: true,
             arguments: {
               NAME: {
                 type: Scratch.ArgumentType.STRING,
@@ -136,7 +155,7 @@
           {
             opcode: "setSoundVolume",
             blockType: Scratch.BlockType.COMMAND,
-            text: "设置音乐 [NAME] 的音量为 [VOL]",
+            text: "设置音乐 [NAME] 的音量为 [VOL] %",
             arguments: {
               NAME: {
                 type: Scratch.ArgumentType.STRING,
@@ -151,7 +170,7 @@
           {
             opcode: "setVolume",
             blockType: Scratch.BlockType.COMMAND,
-            text: "设置所有音乐的音量为 [VOL]",
+            text: "设置所有音乐的音量为 [VOL] %",
             arguments: {
               VOL: {
                 type: Scratch.ArgumentType.NUMBER,
@@ -175,6 +194,26 @@
             },
           },
         ],
+        menus:{
+          'type.List':[
+            {
+              text: 'URL',
+              value: 'URL'
+            },
+            {
+              text: '总长度',
+              value: 'duration'
+            },
+            {
+              text: '当前播放进度',
+              value: 'currentTime'
+            },
+            {
+              text: '音量',
+              value: 'volume'
+            },
+          ],
+        }
       };
     }
 
@@ -195,9 +234,18 @@
       });
     }
 
+    isAudioFile(url){
+      const type = [".mp3", ".wav", ".ogg"];
+      const urlType = url.substr(url.lastIndexOf("."));
+      return type.includes(urlType.toLowerCase());
+    }
+    
     loadSound(args) {
       let name = Scratch.Cast.toString(args.NAME),
         url = Scratch.Cast.toString(args.URL);
+      if(!this.isAudioFile(url))
+        return ;
+      
       if(this.sounds[name]){
         const sound1 = this.sounds[name];
         sound1["audio"].pause();
@@ -291,6 +339,33 @@
         return true;
       }
       return false;
+    }
+    soundData(args){
+      let name = Scratch.Cast.toString(args.NAME);
+      const sound = this.sounds[name];
+      if(args.TYPE==='URL'){
+        if (sound) {
+          return sound["audio"].src;
+        } else {
+          console.error("Sound not found:", name);
+          return "";
+        }
+      }else if(args.TYPE==='duration'){
+        if (sound && sound["audio"]) {
+          return sound["audio"].duration;
+        }
+        return "0";
+      }else if(args.TYPE==='currentTime'){
+        if (sound && sound["audio"]) {
+          return sound["audio"].currentTime;
+        }
+        return "0";
+      }else if(args.TYPE==='volume'){
+        if (sound && sound["audio"]) {
+          return Scratch.Cast.toString(sound["audio"].volume * 100);
+        }
+        return "0";
+      }
     }
     soundURL(args) {
       let name = Scratch.Cast.toString(args.NAME);
