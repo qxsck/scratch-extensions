@@ -10,7 +10,6 @@
         isPlaying: false,
         ended: false,
         pause: false,
-        volume: 100,
       };
     }
 
