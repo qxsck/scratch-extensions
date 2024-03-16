@@ -128,7 +128,7 @@
               },
               TYPE: {
                 type: Scratch.ArgumentType.STRING,
-                menu: "data.List",
+                menu: "canChangedata.List",
               },
               NUM: {
                 type: Scratch.ArgumentType.NUMBER,
@@ -167,7 +167,7 @@
               value: "currentTime",
             },
             {
-              text: "音量",
+              text: "音量（%）",
               value: "volume",
             },
             {
@@ -203,7 +203,7 @@
               value: "ended",
             },
           ],
-          "data.List": [
+          "canChangedata.List": [
             {
               text: "音量（%）",
               value: "volume",
@@ -375,34 +375,19 @@
     soundData(args) {
       let name = Scratch.Cast.toString(args.NAME);
       const sound = this.sounds[name];
-      if (args.TYPE === "URL") {
-        if (sound) {
+      if (sound && sound["audio"]) {
+        if (args.TYPE === "URL") {
           return sound["audio"].src;
-        } else {
-          console.error("Sound not found:", name);
-          return "";
-        }
-      } else if (args.TYPE === "duration") {
-        if (sound && sound["audio"]) {
+        } else if (args.TYPE === "duration") {
           return sound["audio"].duration;
-        }
-        return "0";
-      } else if (args.TYPE === "currentTime") {
-        if (sound && sound["audio"]) {
+        } else if (args.TYPE === "currentTime") {
           return sound["audio"].currentTime;
+        } else if (args.TYPE === "volume") {
+          return Scratch.Cast.toString(Math.round(sound["audio"].volume * 100));
+        } else if (args.TYPE === "speed") {
+          return sound["audio"].playbackRate;
         }
-        return "0";
-      } else if (args.TYPE === "volume") {
-        if (sound && sound["audio"]) {
-          return Scratch.Cast.toString(sound["audio"].volume * 100);
-        }
-        return "0";
-      }else if (args.TYPE === "speed") {
-        if (sound && sound["audio"]) {
-            return sound["audio"].playbackRate;
-        }
-        return "0";
-      }
+      }else return '0';
     }
     setSound(args) {
       let name = Scratch.Cast.toString(args.NAME);
