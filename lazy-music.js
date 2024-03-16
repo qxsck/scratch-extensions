@@ -362,15 +362,17 @@
     soundDataBoolean(args) {
       let name = Scratch.Cast.toString(args.NAME);
       const sound = this.sounds[name];
-      if (args.TYPE === "loaded") {
-        return sound ? sound["loaded"] : false;
-      } else if (args.TYPE === "playing") {
-        return sound ? sound["isPlaying"] : false;
-      } else if (args.TYPE === "ended") {
-        return sound ? sound["ended"] : false;
-      } else if (args.TYPE === "pause") {
-        return sound ? sound["pause"] : false;
-      }
+      if (sound && sound["audio"]) {
+        if (args.TYPE === "loaded") {
+          return sound["loaded"];
+        } else if (args.TYPE === "playing") {
+          return sound["isPlaying"];
+        } else if (args.TYPE === "ended") {
+          return sound["ended"];
+        } else if (args.TYPE === "pause") {
+          return sound["pause"];
+        }
+      }else return false;
     }
     soundData(args) {
       let name = Scratch.Cast.toString(args.NAME);
@@ -387,17 +389,17 @@
         } else if (args.TYPE === "speed") {
           return sound["audio"].playbackRate;
         }
-      } else return "0";
+      }else return '0';
     }
     setSound(args) {
       let name = Scratch.Cast.toString(args.NAME);
       let data = Scratch.Cast.toNumber(args.NUM);
       const sound = this.sounds[name];
       if (sound && sound["audio"]) {
-        if (args.TYPE === "volume") {
-          data = Math.min(100, Math.max(0, data));
+        if(args.TYPE==='volume'){
+          data= Math.min(100, Math.max(0, data));
           sound["audio"].volume = data / 100;
-        } else if (args.TYPE === "speed") {
+        }else if (args.TYPE === 'speed') {
           data = Math.min(2, Math.max(0.5, data));
           sound["audio"].playbackRate = data;
         }
