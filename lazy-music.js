@@ -387,17 +387,17 @@
         } else if (args.TYPE === "speed") {
           return sound["audio"].playbackRate;
         }
-      }else return '0';
+      } else return "0";
     }
     setSound(args) {
       let name = Scratch.Cast.toString(args.NAME);
       let data = Scratch.Cast.toNumber(args.NUM);
       const sound = this.sounds[name];
       if (sound && sound["audio"]) {
-        if(args.TYPE==='volume'){
-          data= Math.min(100, Math.max(0, data));
+        if (args.TYPE === "volume") {
+          data = Math.min(100, Math.max(0, data));
           sound["audio"].volume = data / 100;
-        }else if (args.TYPE === 'speed') {
+        } else if (args.TYPE === "speed") {
           data = Math.min(2, Math.max(0.5, data));
           sound["audio"].playbackRate = data;
         }
