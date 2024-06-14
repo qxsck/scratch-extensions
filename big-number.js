@@ -58,26 +58,25 @@
         return result_;
       };
 
-      this.toInt = function (num) {
+      this.toBigNumber = function (num) {
         let str = String(num),
           P = str.indexOf(".");
         P = P === -1 ? str.length - 1 : P;
-        let str_ = str.replace(".", "");
-        let try_ = Number(str_);
-        str_ = isNaN(try_) ? "0" : str_.indexOf(".") === -1 ? str_ : "0";
-        let len = isNaN(try_)
-          ? 0
-          : str_.indexOf(".") === -1
-            ? str.length - P - 1
-            : 0;
+        let noDecNumber=str.replace(".", "");
+        let try_ = Number(noDecNumber);
+        let [str_, len_] = isNaN(try_)
+          ? ["0", 0]
+          : noDecNumber.indexOf(".") === -1
+            ? [noDecNumber, str.length - P - 1]
+            : ["0", 0];
         return {
           num: BigInt(str_),
-          len: len,
+          len: len_,
         };
       };
       this.toSamePer = function (num, num2) {
-        let a = this.toInt(num),
-          b = this.toInt(num2);
+        let a = this.toBigNumber(num),
+          b = this.toBigNumber(num2);
         let len = Math.max(a.len, b.len);
         if (len === a.len) b.num = b.num * this.tenTimes(len - b.len);
         else a.num = a.num * this.tenTimes(len - a.len);
@@ -110,7 +109,7 @@
         return this.formatNum(result, 100);
       };
       this.powFunc = function (num, num2) {
-        let a = this.toInt(num),
+        let a = this.toBigNumber(num),
           b = Math.trunc(this.toNum(num2)),
           flag = 0;
         if (a.num === 0n) return '0';
