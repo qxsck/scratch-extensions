@@ -1,26 +1,25 @@
 (function (Scratch) {
   "use strict";
-  let i10ndefaultValue = {
-    "qxsckbignumber.name": "Big Number",
-
-    "qxsckbignumber.arithmetic": "📏Arithmetic",
-    "qxsckbignumber.logic": "🔎Logic",
-  };
-
   Scratch.translate.setup({
-    en: {
-      ...i10ndefaultValue,
-    },
     zh: {
-      "qxsckbignumber.name": "高精度运算",
+      "Big Number": "高精度运算",
 
-      "qxsckbignumber.arithmetic": "📏运算",
-      "qxsckbignumber.logic": "🔎逻辑",
+      '🗂️Setting': '🗂️设置',
+      "📏Arithmetic": "📏运算",
+      "🔎Logic": "🔎逻辑",
+      "🧪Math": "🧪数学",
+
+      "set max precision is [NUM]": '设置最大精度为 [NUM]',
+
+      "round [NUM] to [NUM2] decimal places": '四舍五入 [NUM] 到第 [NUM2] 位小数',
+      "[OPER] of [NUM]": '[OPER] ( [NUM] )',
+      '[OPER] of [NUM] and [NUM2]': '[OPER] ( [NUM] , [NUM2] )',
+      "pick random [NUM] to [NUM2]": '获取从 [NUM] 到 [NUM2] 的随机数',
     },
   });
   class bigNumber {
-    constructor(runtime) {
-      this.runtime = runtime ?? Scratch?.vm?.runtime;
+    constructor() {
+      this.maxPrecision = 100;
 
       this.tenTimes = function (val) {
         return 10n ** BigInt(val);
@@ -62,7 +61,7 @@
         let str = String(num),
           P = str.indexOf(".");
         P = P === -1 ? str.length - 1 : P;
-        let noDecNumber=str.replace(".", "");
+        let noDecNumber = str.replace(".", "");
         let try_ = Number(noDecNumber);
         let [str_, len_] = isNaN(try_)
           ? ["0", 0]
@@ -90,23 +89,26 @@
       this.addFunc = function (num, num2) {
         let { num: a, num2: b } = this.toSamePer(num, num2);
         let result = a.num + b.num;
-        return this.formatNum(result, a.len);
+        let num_ = this.formatNum(result, a.len);
+        return this.roundFunc(num_, this.maxPrecision);
       };
       this.subFunc = function (num, num2) {
         let { num: a, num2: b } = this.toSamePer(num, num2);
         let result = a.num - b.num;
-        return this.formatNum(result, a.len);
+        let num_ = this.formatNum(result, a.len);
+        return this.roundFunc(num_, this.maxPrecision);
       };
       this.mulFunc = function (num, num2) {
         let { num: a, num2: b } = this.toSamePer(num, num2);
         let result = a.num * b.num;
-        return this.formatNum(result, a.len * 2);
+        let num_ = this.formatNum(result, a.len * 2);
+        return this.roundFunc(num_, this.maxPrecision);
       };
       this.divFunc = function (num, num2) {
         let { num: a, num2: b } = this.toSamePer(num, num2);
         if (b.num === 0n) return Infinity;
-        let result = (a.num * this.tenTimes(100)) / b.num;
-        return this.formatNum(result, 100);
+        let result = (a.num * this.tenTimes(this.maxPrecision + 1)) / b.num;
+        return this.formatNum(result, this.maxPrecision + 1);
       };
       this.powFunc = function (num, num2) {
         let a = this.toBigNumber(num),
@@ -116,28 +118,121 @@
         else if (b.num === 0n) return '1';
         if (b < 0) (flag = 1), (b = -b);
         let result = a.num ** BigInt(b);
-        if (!flag) return this.formatNum(result, a.len * b);
-        else return this.divFunc("1", this.formatNum(result, a.len * b));
+        let num_;
+        if (!flag) num_ = this.formatNum(result, a.len * b);
+        else num_ = this.divFunc("1", this.formatNum(result, a.len * b));
+        return this.roundFunc(num_, this.maxPrecision);
       };
       this.modFunc = function (num, num2) {
         let { num: a, num2: b } = this.toSamePer(num, num2);
         if (b.num === 0n) return '0';
         let result = a.num % b.num;
-        return this.formatNum(result, a.len);
+        let num_ = this.formatNum(result, a.len);
+        return this.roundFunc(num_, this.maxPrecision);
       };
 
+      this.absFunc = function (num) {
+        return num.replace('-', '');
+      }
+      this.maxMinFunc = function (oper, num, num2) {
+        let a, b;
+        switch (oper) {
+          case 'max':
+            ({ num: a, num2: b } = this.toSamePer(num, num2));
+            return a.num < b.num ? str2 : str;
+          case 'min':
+            ({ num: a, num2: b } = this.toSamePer(num, num2));
+            return a.num > b.num ? str2 : str;
+        }
+      };
+      this.roundFunc = function (num, num2) {
+        let a = this.toBigNumber(num),
+          round = Math.trunc(this.toNum(num2)),
+          flag = a.num >= 0n;
+        if (round >= a.len) {
+          return this.formatNum(a.num, a.len);
+        }
+        for (let i = 0; i < a.len - round - 1; i++) a.num = a.num / 10n;
+        let lastNum = a.num % 10n, flag2;
+        a.num = a.num / 10n;
+        if (flag) {
+          flag2 = lastNum % 10n >= 5n;
+          a.num = a.num + BigInt(flag2);
+        }
+        else {
+          flag2 = lastNum % 10n <= -5n;
+          a.num = a.num - BigInt(flag2);
+        }
+        for (let i = 0; i < a.len - round; i++) a.num = a.num * 10n;
+        return this.formatNum(a.num, a.len);
+      };
+      this.randomFunc = function (num, num2) {
+        let { num: a, num2: b } = this.toSamePer(num, num2);
+        let aa = this.formatNum(a.num, a.len),
+          bb = this.formatNum(b.num, b.len),
+          temp1 = aa, temp2 = bb,
+          per = a.len;
+        aa = this.maxMinFunc('min', temp1, temp2);
+        bb = this.maxMinFunc('max', temp1, temp2);
+        let random_ = String(Math.random());
+        random_ = this.roundFunc(random_, 10);
+        let nums = this.toSamePer(aa, random_),
+          nums2 = this.toSamePer(bb, random_);
+        a = nums.num, b = nums2.num, random_ = nums.num2;
+        a = this.formatNum(a.num, a.len),
+          b = this.formatNum(b.num, b.len),
+          random_ = this.formatNum(random_.num, random_.len);
+        let different = this.mulFunc(this.subFunc(b, a), random_),
+          randomNum = this.addFunc(different, a);
+        return this.roundFunc(randomNum, per);
+      };
+      this.sqrtFunc = function (x) {
+        if (x <= '0') {
+          return '0';
+        }
+        let last = '0';
+        let res = '1';
+        while (true) {
+          last = res;
+          res = this.divFunc(this.addFunc(res, this.divFunc(x, res)), '2');
+          if (
+            this.roundFunc(res, Math.trunc(this.maxPrecision / 2.5)) ===
+            this.roundFunc(last, Math.trunc(this.maxPrecision / 2.5))
+          ) break;
+        }
+        return res;
+      }
+
       this.formatMessage = function (id) {
-        return Scratch.translate({ id: id, default: i10ndefaultValue[id] });
+        return Scratch.translate({ id: id, default: id });
       };
     }
 
     getInfo() {
       return {
         id: "qxsckbignumber",
-        name: this.formatMessage("qxsckbignumber.name"),
+        name: this.formatMessage("Big Number"),
         color1: "#ff8c3b",
         blocks: [
-          "---" + this.formatMessage("qxsckbignumber.arithmetic"),
+          {
+            blockType: "label",
+            text: this.formatMessage("🗂️Setting"),
+          },
+          {
+            opcode: "setPrecision",
+            blockType: Scratch.BlockType.COMMAND,
+            text: this.formatMessage("set max precision is [NUM]"),
+            arguments: {
+              NUM: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "100",
+              },
+            },
+          },
+          {
+            blockType: "label",
+            text: this.formatMessage("📏Arithmetic"),
+          },
           {
             opcode: "add",
             blockType: Scratch.BlockType.REPORTER,
@@ -228,7 +323,10 @@
               },
             },
           },
-          "---" + this.formatMessage("qxsckbignumber.logic"),
+          {
+            blockType: "label",
+            text: this.formatMessage("🔎Logic"),
+          },
           {
             opcode: "lt",
             blockType: Scratch.BlockType.BOOLEAN,
@@ -319,9 +417,95 @@
               },
             },
           },
+          {
+            blockType: "label",
+            text: this.formatMessage("🧪Math"),
+          },
+          {
+            opcode: "unaryOper",
+            blockType: Scratch.BlockType.REPORTER,
+            text: this.formatMessage("[OPER] of [NUM]"),
+            arguments: {
+              OPER: {
+                type: Scratch.ArgumentType.STRING,
+                menu: "unaryOper.List",
+              },
+              NUM: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "-0.1",
+              },
+            },
+          },
+          {
+            opcode: "binaryOper",
+            blockType: Scratch.BlockType.REPORTER,
+            text: this.formatMessage("[OPER] of [NUM] and [NUM2]"),
+            arguments: {
+              OPER: {
+                type: Scratch.ArgumentType.STRING,
+                menu: "binaryOper.List",
+              },
+              NUM: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "-0.1",
+              },
+              NUM2: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "0.1",
+              },
+            },
+          },
+          {
+            opcode: "round",
+            blockType: Scratch.BlockType.REPORTER,
+            text: this.formatMessage("round [NUM] to [NUM2] decimal places"),
+            arguments: {
+              NUM: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "123.45",
+              },
+              NUM2: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "1",
+              },
+            },
+          },
+          {
+            opcode: "random",
+            blockType: Scratch.BlockType.REPORTER,
+            text: this.formatMessage("pick random [NUM] to [NUM2]"),
+            arguments: {
+              NUM: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "0.999",
+              },
+              NUM2: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "1.001",
+              },
+            },
+          },
         ],
-        menus: {},
+        menus: {
+          "unaryOper.List": {
+            items: ["abs", "ceil", "floor", 'trunc', 'sqrt',],
+          },
+          "binaryOper.List": {
+            items: ["max", "min",],
+          },
+        },
       };
+    }
+
+    replaceString(str, str2, index) {
+      return str.slice(0, index) + str2 + str.slice(index + 1);
+    }
+
+    setPrecision(args) {
+      let num = Number(args.NUM);
+      num = Math.trunc(num);
+      if (num < 0) num = 0;
+      this.maxPrecision = num;
     }
 
     add(args) {
@@ -367,6 +551,58 @@
       let { num: a, num2: b } = this.toSamePer(args.NUM, args.NUM2);
       return a.num !== b.num;
     }
+
+    unaryOper(args) {
+      let oper = args.OPER,
+        str = String(args.NUM);
+      switch (oper) {
+        case 'abs':
+          return this.absFunc(str);
+        case 'ceil':
+          if (str.indexOf('-') !== -1) {
+            if (str.indexOf('.') !== -1)
+              str = this.replaceString(str, '0', str.indexOf('.') + 1);
+            return this.roundFunc(str, 0);
+          } else {
+            if (str.indexOf('.') !== -1)
+              str = this.replaceString(str, '9', str.indexOf('.') + 1);
+            return this.roundFunc(str, 0);
+          }
+        case 'floor':
+          if (str.indexOf('-') !== -1) {
+            if (str.indexOf('.') !== -1)
+              str = this.replaceString(str, '9', str.indexOf('.') + 1);
+            return this.roundFunc(str, 0);
+          } else {
+            if (str.indexOf('.') !== -1)
+              str = this.replaceString(str, '0', str.indexOf('.') + 1);
+            return this.roundFunc(str, 0);
+          }
+        case 'trunc':
+          if (str.indexOf('.') !== -1)
+            str = this.replaceString(str, '0', str.indexOf('.') + 1);
+          return this.roundFunc(str, 0);
+        case 'sqrt':
+          return this.sqrtFunc(str);
+      }
+    }
+    binaryOper(args) {
+      let oper = args.OPER,
+        str = String(args.NUM),
+        str2 = String(args.NUM2);
+      switch (oper) {
+        case 'max':
+          this.maxMinFunc('max', str, str2);
+        case 'min':
+          this.maxMinFunc('min', str, str2);
+      }
+    }
+    round(args) {
+      return this.roundFunc(args.NUM, args.NUM2);
+    }
+    random(args) {
+      return this.randomFunc(args.NUM, args.NUM2);
+    }
   }
-  Scratch.extensions.register(new bigNumber(Scratch?.vm?.runtime));
+  Scratch.extensions.register(new bigNumber());
 })(Scratch);
