@@ -9,3 +9,4 @@ My scratch extensions:
 7. matrix
 8. lazy music (no English translate)
 9. big number
+10. extension for compatible xmw's project enhance extension
