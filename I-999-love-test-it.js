@@ -31,7 +31,7 @@
   const setExpandableBlocks = ((runtime, extension) => {
     if (expandableBlockInit) return;
     expandableBlockInit = true;
-    // 在编辑器获取scratchBlocks与获取VM的方法来自https://github.com/FurryR/lpp-scratch
+    // 在编辑器获取scratchBlocks与获取VM的方法来自 https://github.com/FurryR/lpp-scratch 的LPP扩展
     const hijack = (fn) => {
       const _orig = Function.prototype.apply;
       Function.prototype.apply = (thisArg) => thisArg;
@@ -103,27 +103,29 @@
       }
       // + 按钮
       class PlusButton extends FieldButton {
-        constructor(id) {
+        constructor() {
           super(plusImage);
-          this.id = id;
         }
         onclick() {
           const block = this.sourceBlock_;
-          //console.log(block);
-          block.itemCount_[this.id] += 1;
+          // 增加积木数量改变
+          block.itemCount_ += 1;
           block.updateShape(); // 更新
         }
       }
       // - 按钮
       class MinusButton extends FieldButton {
-        constructor(id) {
+        constructor() {
           super(minusImage);
-          this.id = id;
         }
         onclick() {
+          // 获取这个 field 的积木
           const block = this.sourceBlock_;
-          if (block.itemCount_[this.id] > 0) {
-            block.itemCount_[this.id] -= 1;
+          // 增加积木数量改变
+          block.itemCount_ -= 1;
+          if (block.itemCount_ < 0) {
+            // 不能有 -1 个参数
+            block.itemCount_ = 0;
           }
           block.updateShape(); // 更新
         }
@@ -170,89 +172,6 @@
             newBlock.outputConnection.connect(input.connection);
           }
         },
-        addInput_: function (id, type, text) {
-          let input;
-          input =
-            type === "list" || type === "text"
-              ? this.appendDummyInput(id)
-              : this.appendValueInput(id);
-          if (type === "text") {
-            input.appendField('text');
-          } else if (type === "boolean") {
-            input.setCheck("Boolean");
-          } else if (type === "list") {
-            input.appendField(
-              new Blockly.FieldDropdown(text),
-              id
-            );
-            const fields = runtime
-              .getEditingTarget()
-              ?.blocks.getBlock(this.id)?.fields;
-            if (fields) {
-              fields[id] = {
-                id: null,
-                name: id,
-                value: text[0][1],
-              };
-            }
-            this.moveInputBefore(id, "END");
-          } else {
-            this.attachShadow_(
-              input,
-              type,
-              text
-            );
-          }
-        },
-        deleteInput_: function (id, type) {
-          const blocks = runtime._editingTarget.blocks;
-          const targetBlock = blocks.getBlock(this.id);
-
-          this.ARGS.pop(id);
-          const input = targetBlock.inputs[id];
-          if (input) {
-            if (input.block !== null) {
-              const blockInInput = blocks.getBlock(input.block);
-              blockInInput.topLevel = true;
-              blockInInput.parent = null;
-              blocks.moveBlock({
-                id: blockInInput.id,
-                oldParent: this.id,
-                oldInput: id,
-                newParent: undefined,
-                newInput: undefined,
-                //newCoordinate: e.newCoordinate
-              });
-            }
-            if (input.shadow !== null) {
-              if (input.shadow == input.block) blocks.deleteBlock(input.shadow);
-              else blocks.deleteBlock(input.block);
-            }
-          }
-          this.removeInput(id);
-          if (type === "list") {
-            const fields = runtime
-              .getEditingTarget()
-              ?.blocks.getBlock(this.id)?.fields;
-            if (fields) {
-              delete fields[id];
-            }
-          } else {
-            delete targetBlock.inputs[id];
-          }
-        },
-        mutationToDom: function () {
-          // 保存数据到sb3中
-          const container = document.createElement("mutation");
-          //console.log(this.itemCount_)
-          container.setAttribute("items", JSON.stringify(this.itemCount_));
-          return container;
-        },
-        domToMutation: function (xmlElement) {
-          // 读取sb3保存的数据
-          this.itemCount_ = JSON.parse(xmlElement.getAttribute("items"));
-          this.updateShape(); // 读了之后更新
-        },
         updateShape: function () {
           let wasRendered = this.rendered;
           this.rendered = false;
@@ -264,49 +183,178 @@
 
           // 创建新的积木
           let opcode_ = this.opcode_,
-            expandableArguments = this.expandableArguments;
+            expandableArgs = this.expandableArgs,
+            inputKeys = Object.keys(expandableArgs),
+            i;
+          for (i = 1; i <= this.itemCount_; i++) {
+            if (!this.getInput(`${inputKeys[0]}_${i}`)) {
+              for (let j = 0; j < inputKeys.length; j++) {
+                let inputKey = inputKeys[j],
+                  inputKeyID = `${inputKey}_${i}`;
 
-          let argumentTypes={};
-          //console.log(this.itemCount_)
-          for (let i = 0; i < this.itemCount_.length; i++) {
-            for (let j = 0; j < expandableArguments[i][2].length; j++) {
-              let argumentName = expandableArguments[i][2][j][0],
-                argumentType = expandableArguments[i][2][j][1],
-                argumentText = expandableArguments[i][2][j][2];
-                argumentTypes[argumentName]=argumentType;
-              //console.log(argumentName, argumentType, argumentText)
-              for (let k = 0; k < this.itemCount_[i]; k++) {
-                let argumentKey = `${argumentName}_${k}`;
-                //console.log(argumentKey)
-                //console.log(!this.getInput(argumentKey), argumentKey);
-                if (!this.getInput(argumentKey)) {
-                  this.ARGS.push(argumentKey);
-                  this.addInput_(argumentKey, argumentType,
-                    typeof argumentText === 'function'
-                      ? argumentText(k, this.itemCount_)
-                      : argumentText
+                this.ARGS.push(inputKeyID);
+                let input,
+                  type = expandableArgs[inputKey][0],
+                  text = expandableArgs[inputKey][1] || null,
+                  canEndInput = expandableArgs[inputKey][2] || 0;
+
+                input =
+                  type === "substack"
+                    ? this.appendStatementInput(inputKeyID)
+                    : type === "list" || type === "text"
+                      ? this.appendDummyInput(inputKeyID)
+                      : this.appendValueInput(inputKeyID);
+                if (type === "text") {
+                  input.appendField('text');
+                } else if (type === "boolean") {
+                  input.setCheck("Boolean");
+                } else if (type === "list") {
+                  input.appendField(
+                    new Blockly.FieldDropdown(text),
+                    inputKeyID
+                  );
+                  const fields = runtime
+                    .getEditingTarget()
+                    ?.blocks.getBlock(this.id)?.fields;
+                  if (fields) {
+                    fields[inputKeyID] = {
+                      id: null,
+                      name: inputKeyID,
+                      value: "+",
+                    };
+                  }
+                  this.moveInputBefore(inputKeyID, "END");
+                } else if (type === "substack") {
+                  input.setCheck(null);
+                } else {
+                  this.attachShadow_(
+                    input,
+                    type,
+                    text
                   );
                 }
+
               }
             }
           }
           if (runtime._editingTarget) {
             // 移除 input 并记录
 
-            for (let i = 0; i < this.itemCount_.length; i++) {
-              for (let j = 0; j < expandableArguments[i][2].length; j++) {
-                let argumentName = expandableArguments[i][2][j][0],
-                  argumentType = expandableArguments[i][2][j][1];
-
-                let k = this.itemCount_[i],
-                  argumentKey = `${argumentName}_${k}`;
-                while (this.getInput(argumentKey)) {
-                  argumentKey = `${argumentName}_${k}`;
-                  this.deleteInput_(argumentKey, argumentType);
-                  k++;
+            if (this.getInput('SUBSTACK')) {
+              try {
+                const blocks = runtime._editingTarget.blocks;
+                const targetBlock = blocks.getBlock(this.id);
+                const input = targetBlock.inputs['SUBSTACK'];
+                if (input) {
+                  if (input.block !== null) {
+                    const blockInInput = targetBlock.getBlock(input.block);
+                    blockInInput.topLevel = true;
+                    blockInInput.parent = null;
+                    blocks.moveBlock({
+                      id: blockInInput.id,
+                      oldParent: this.id,
+                      oldInput: 'SUBSTACK',
+                      newParent: undefined,
+                      newInput: undefined,
+                    });
+                  }
+                  if (input.shadow !== null && input.shadow == input.block) {
+                    blocks.deleteBlock(input.shadow);
+                  }
                 }
+                this.removeInput('SUBSTACK');
+                delete targetBlock.inputs['SUBSTACK'];
+              } catch {
+                // nothing
               }
             }
+
+            if (this.getInput('SUBSTACK')) {
+              try {
+                const blocks = runtime._editingTarget.blocks;
+                const targetBlock = blocks.getBlock(this.id);
+                const input = targetBlock.inputs['SUBSTACK'];
+                if (input) {
+                  if (input.block !== null) {
+                    const blockInInput = targetBlock.getBlock(input.block);
+                    blockInInput.topLevel = true;
+                    blockInInput.parent = null;
+                    blocks.moveBlock({
+                      id: blockInInput.id,
+                      oldParent: this.id,
+                      oldInput: 'SUBSTACK',
+                      newParent: undefined,
+                      newInput: undefined,
+                    });
+                  }
+                  if (input.shadow !== null && input.shadow == input.block) {
+                    blocks.deleteBlock(input.shadow);
+                  }
+                }
+                this.removeInput('SUBSTACK');
+                delete targetBlock.inputs['SUBSTACK'];
+              } catch {
+                // nothing
+              }
+            }
+
+            let iTemp = i;
+            for (let j = 0; j < inputKeys.length; j++) {
+              i = iTemp;
+              const blocks = runtime._editingTarget.blocks;
+              const targetBlock = blocks.getBlock(this.id);
+              const toDel = [];
+              let inputKey = inputKeys[j],
+                type = expandableArgs[inputKey][0],
+                inputKeyID = `${inputKey}_${i}`;
+              while (this.getInput(inputKeyID)) {
+                this.ARGS.pop(inputKeyID);
+                const input = targetBlock.inputs[inputKeyID];
+                if (input) {
+                  if (input.block !== null) {
+                    const blockInInput = blocks.getBlock(input.block);
+                    blockInInput.topLevel = true;
+                    blockInInput.parent = null;
+                    blocks.moveBlock({
+                      id: blockInInput.id,
+                      oldParent: this.id,
+                      oldInput: inputKeyID,
+                      newParent: undefined,
+                      newInput: undefined,
+                      //newCoordinate: e.newCoordinate
+                    });
+                  }
+                  if (input.shadow !== null) {
+                    if (input.shadow == input.block) blocks.deleteBlock(input.shadow);
+                    else blocks.deleteBlock(input.block);
+                  }
+                }
+                this.removeInput(inputKeyID);
+                if (type === "list") {
+                  const fields = runtime
+                    .getEditingTarget()
+                    ?.blocks.getBlock(this.id)?.fields;
+                  if (fields) {
+                    delete fields[inputKeyID];
+                  }
+                } else {
+                  toDel.push(inputKeyID);
+                }
+                i++;
+              }
+              setTimeout(() => {
+                toDel.forEach((i) => {
+                  delete targetBlock.inputs[i];
+                });
+              }, 0);
+            }
+          }
+
+          // 移动按钮
+          this.removeInput("BEGIN");
+          if (this.itemCount_ > 0) {
+            this.appendDummyInput("BEGIN").appendField(this.textBegin);
+            this.moveInputBefore("BEGIN", "BEGIN");
           }
 
           const getArg = (str) => {
@@ -319,56 +367,77 @@
               return false;
             }
           };
-          const getIndex = (arr, key) => {
-            return arr.findIndex(obj => obj.name === key);
-          }
-
           //console.log(this.inputList)
           let inputList = this.inputList;
-          for (let i = 0; i < this.itemCount_.length; i++) {
-            for (let k = 0; k < this.itemCount_[i]; k++) {
-              for (let j = 0; j < expandableArguments[i][2].length; j++) {
-                let argumentName = expandableArguments[i][2][j][0],
-                  argumentType = expandableArguments[i][2][j][1],
-                  argumentText = expandableArguments[i][2][j][2],
-                  argumentKey = `${argumentName}_${k}`;
-                //未完工
-                if (argumentType === 'text') {
-                  let index = getIndex(inputList, argumentKey);
-                  let text = typeof argumentText === 'function'
-                    ? argumentText(k, this.itemCount_)
-                    : argumentText;
-
-                  if (text === '') {
-                    this.inputList[index].fieldRow[0].setText('');
-                    this.inputList[index].setVisible(false);
-                  } else {
-                    this.inputList[index].fieldRow[0].setText(text);
-                    this.inputList[index].setVisible(true);
+          for (i = 0; i < inputList.length; i++) {
+            let name = inputList[i].name,
+              args = getArg(name);
+            if (
+              args === false &&
+              this.defaultText &&
+              Array.isArray(this.defaultText) &&
+              i === this.defaultIndex
+            ) {
+              if (this.inputList[i].fieldRow.length !== 0) {
+                this.inputList[this.defaultIndex].fieldRow[0].setText(
+                  (this.itemCount_ === 0 ? this.defaultText[0] : this.defaultText[1]),
+                );
+              }
+            } else {
+              if (expandableArgs[args[0]]) {
+                let arg = expandableArgs[args[0]],
+                  type = arg[0],
+                  text = arg[1],
+                  rule = arg[2] || 0;
+                if (this.inputList[i].fieldRow.length !== 0) {
+                  if (type === 'text') {
+                    if (rule === 1) {
+                      if (Array.isArray(text)) {
+                        this.inputList[i].fieldRow[0].setText(args[1] === 1 ? text[0] : text[1]);
+                      } else this.inputList[i].fieldRow[0].setText(text);
+                    } else {
+                      let flag1 = (args[1] !== 1 && args[1] !== this.itemCount_),
+                        index = inputKeys.indexOf(args[0]),
+                        flag2 = index > 0 && index < (inputKeys.length - 1),
+                        flag3 = args[1] > 1 || index > 0,
+                        flag4 = args[1] < this.itemCount_ || (index < inputKeys.length - 1);
+                      if (flag1 || flag2 || flag3 && flag4) {
+                        this.inputList[i].fieldRow[0].setText(text);
+                        this.inputList[i].setVisible(true);
+                      } else {
+                        this.inputList[i].fieldRow[0].setText('');
+                        this.inputList[i].setVisible(false);
+                      }
+                    }
                   }
                 }
-
-                this.moveInputBefore(argumentKey, null);
               }
-            }
-            if (expandableArguments[i][0]) {
-              let minusButton = `MINUS${i}`;
-              this.removeInput(minusButton);
-              if (this.itemCount_[i] > 0) {
-                this.appendDummyInput(minusButton).appendField(new this.minusButton(i));
-                this.moveInputBefore(minusButton, null);
-              }
-
-              let plusButton = `PLUS${i}`;
-              this.removeInput(plusButton);
-              this.appendDummyInput(plusButton).appendField(new this.plusButton(i));
-              this.moveInputBefore(plusButton, null);
             }
           }
+          for (i = 1; i <= this.itemCount_; i++) {
+            for (let j = 0; j < inputKeys.length; j++) {
+              this.moveInputBefore(`${inputKeys[j]}_${i}`, null);
+            }
+          }
+          this.removeInput("END");
+          if (this.itemCount_ > 0) {
+            this.appendDummyInput("END").appendField(this.textEnd);
+            this.moveInputBefore("END", null);
+          }
+          this.removeInput("MINUS");
+          if (this.itemCount_ > 0) {
+            this.minusButton = new MinusButton();
+            this.appendDummyInput("MINUS").appendField(this.minusButton);
+            this.moveInputBefore("MINUS", null);
+          }
+          this.moveInputBefore("PLUS", null);
 
+          // 更新 oldItemCount，oldItemCount用于生成domMutation的
+          this.oldItemCount = this.itemCount_;
           // 新的 mutation
           const newExtraState = Blockly.Xml.domToText(this.mutationToDom(this));
-          console.log(newExtraState)
+          if (oldExtraState != newExtraState) {
+            // 判断是否一样，不一样就fire一个mutation更新事件
             Blockly.Events.fire(
               new Blockly.Events.BlockChange(
                 this,
@@ -384,8 +453,7 @@
               try {
                 Object.keys(block.inputs).forEach((name) => {
                   let argName = name.match(/^[A-Z0-9]+/)[0];
-                  console.log(argName)
-                  if (!this.ARGS.includes(name) && argumentTypes[argName] && argumentTypes[argName] !== 'text') {
+                  if (!this.ARGS.includes(name) && this.expandableArgs[argName] && this.expandableArgs[argName][0] !== 'text') {
                     target.blocks.deleteBlock(block.inputs[name].shadow, {
                       source: "default",
                       targetId: target.id,
@@ -403,6 +471,7 @@
                 // nothing
               }
             }, 0);
+          }
           Blockly.Events.setGroup(false);
 
           this.rendered = wasRendered;
@@ -411,34 +480,44 @@
             this.render();
           }
         },
-        init: function (input) {
-          //console.log(input.expandableArguments)
-          this.inputList = [];
-          this.opcode_ = input.opcode;
-          this.expandableArguments = input.expandableArguments;
-
-          let itemCounts = Array(this.expandableArguments.length).fill(0);
-          for (let i = 0; i < this.expandableArguments.length; i++) {
-            itemCounts[i] = this.expandableArguments[i][1];
-          }
-
-          this.itemCount_ = itemCounts;
-
-          this.plusButton = PlusButton;
-          this.minusButton = MinusButton;
+        mutationToDom: function () {
+          // 可以保存别的数据，会保存到sb3中，oldItemCount就是有多少个参数
+          const container = document.createElement("mutation");
+          container.setAttribute("items", `${this.oldItemCount}`);
+          return container;
+        },
+        domToMutation: function (xmlElement) {
+          // 读取 mutationToDom 保存的数据
+          this.itemCount_ = parseInt(xmlElement.getAttribute("items"), 0);
+          this.updateShape(); // 读了之后更新
+        },
+        init: function (type) {
+          // 积木初始化
+          this.itemCount_ = 0;
+          this.oldItemCount = this.itemCount_;
+          this.opcode_ = type.opcode;
+          this.expandableBlock = type.expandableBlock;
+          this.expandableArgs = this.expandableBlock.expandableArgs;
+          this.textBegin = this.expandableBlock.textBegin;
+          this.textEnd = this.expandableBlock.textEnd;
+          this.defaultIndex = this.expandableBlock.defaultIndex || 0;
+          this.defaultText = this.expandableBlock.defaultText;
+          this.plusButton = new PlusButton();
           this.ARGS = [];
-          this.updateShape();
+
+          if (this.removeInput) this.removeInput("PLUS");
+          this.appendDummyInput("PLUS").appendField(this.plusButton);
+          if (this.moveInputBefore) this.moveInputBefore("PLUS", null);
         }
       };
     };
     const { id, blocks: blocksInfo } = extension.getInfo();
     let expandableBlocks = {};
     blocksInfo.forEach((block) => {
-      if (block.isExpandableBlock)
-        expandableBlocks[`${id}_${block.opcode}`] = {
-          opcode: block.opcode,
-          expandableArguments: block.expandableArguments,
-        };
+      if (block.expandableBlock) expandableBlocks[`${id}_${block.opcode}`] = {
+        opcode: block.opcode,
+        expandableBlock: block.expandableBlock,
+      };
     });
     const { scratchBlocks } = getScratch(runtime);
     if (!scratchBlocks) return;
@@ -461,6 +540,17 @@
             expandableAttr.init.call(this, expandableBlocks[property]);
           };
         }
+
+        // if (property == "sb_CreporterRun") {
+        //   const orgInit = value.init;
+        //   value.init = function () {
+        //     // 先用原本的 init
+        //     orgInit.call(this);
+        //     // 你要搞的999神秘的事情
+        //     this.setOutputShape(Blockly.OUTPUT_SHAPE_SQUARE);
+        //   };
+        // }
+        //保证C型reporter积木样式正常
         return Reflect.set(target, property, value);
       },
     });
@@ -482,192 +572,82 @@
 
     getInfo() {
       return {
-        id: 'expandableBlockExample',
-        name: "expandable block example",
+        id: 'sb',
+        name: "expandable blocks's example",
         color1: "#53aae7",
         color2: "#53aae7",
         blocks: [
           {
             opcode: "connect",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
+            text: "connect ",
             disableMonitor: true,
-            isExpandableBlock: true,
-            expandableArguments: [
-              [
-                false,
-                1,
-                [
-                  [
-                    'TEXT',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return 'join';
-                      else return 'empty text'
-                    }
-                  ]
-                ]
-              ],
-              [
-                true,
-                0,
-                [
-                  [
-                    "INPUT",
-                    'string',
-                    function (index, length) {
-                      return `text${index}`;
-                    }
-                  ]
-                ]
-              ]
-            ]
+            arguments: {},
+            expandableBlock: {
+              expandableArgs: {
+                'TEXT': ['text', ',', 0],
+                'ADD': ['string', 'text'],
+              },
+              defaultText: ['connect', 'connect:'],
+              textBegin: '',
+              textEnd: ''
+            },
           },
           {
-            opcode: "connectTwo",
+            opcode: "arit",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
+            text: "[DEFAULT] [OPER] [DEFAULT2] ",
             disableMonitor: true,
-            isExpandableBlock: true,
-            expandableArguments: [
-              [
-                false,
-                1,
-                [
+            arguments: {
+              DEFAULT: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "1",
+              },
+              OPER: {
+                type: Scratch.ArgumentType.STRING,
+                menu: "arit.List",
+              },
+              DEFAULT2: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "2",
+              },
+            },
+            expandableBlock: {
+              expandableArgs: {
+                'OPER': [
+                  'list',
                   [
-                    'TEXT',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return 'join';
-                      else return 'empty text'
-                    }
+                    ["+", "+"],
+                    ["-", "-"],
+                    ["*", "*"],
+                    ["/", "/"],
+                    ["**", "**"],
+                    ["//", "//"],
+                    ["%", "%"],
                   ]
-                ]
-              ],
-              [
-                true,
-                0,
-                [
-                  [
-                    "INPUT",
-                    'string',
-                    function (index, length) {
-                      return `text${index}`;
-                    }
-                  ]
-                ]
-              ],
-              [
-                true,
-                0,
-                [
-                  [
-                    "INPUTT",
-                    'string',
-                    function (index, length) {
-                      return `textt${index}`;
-                    }
-                  ]
-                ]
-              ]
-            ]
-          },
-          {
-            opcode: "connectOptions",
-            blockType: Scratch.BlockType.REPORTER,
-            text: "",
-            disableMonitor: true,
-            isExpandableBlock: true,
-            expandableArguments: [
-              [
-                false,
-                1,
-                [
-                  [
-                    'TEXT',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return 'join';
-                      else return 'empty option'
-                    }
-                  ]
-                ]
-              ],
-              [
-                true,
-                0,
-                [
-                  [
-                    "INPUT",
-                    'list',
-                    [
-                      ["a", "a"],
-                      ["b", "b"],
-                      ["c", "c"],
-                    ]
-                  ]
-                ]
-              ]
-            ]
+                ],
+                'ADD': ['string', '1'],
+              },
+              textBegin: '',
+              textEnd: ''
+            },
           },
           {
             opcode: "array",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
+            text: "empty array",
             disableMonitor: true,
             arguments: {},
-            isExpandableBlock: true,
-            expandableArguments: [
-              [
-                false,
-                1,
-                [
-                  [
-                    'BEGIN',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return 'array [';
-                      else return 'empty array'
-                    }
-                  ]
-                ]
-              ],
-              [
-                true,
-                0,
-                [
-                  [
-                    "VALUE",
-                    'string',
-                    function (index, length) {
-                      return `value${index}`;
-                    }
-                  ],
-                  [
-                    "GAP",
-                    'text',
-                    function (index, length) {
-                      if (index < length[1] - 1) return ',';
-                      else return ''
-                    }
-                  ]
-                ]
-              ],
-              [
-                false,
-                1,
-                [
-                  [
-                    'END',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return ']';
-                      else return ''
-                    }
-                  ]
-                ]
-              ],
-            ],
+            expandableBlock: {
+              expandableArgs: {
+                'VAL': ['string', 'value'],
+                'TEXT': ['text', ',', 0],
+              },
+              defaultText: ['empty array', 'array:'],
+              textBegin: '[',
+              textEnd: ']'
+            }
+
           },
           {
             opcode: "object",
@@ -675,145 +655,180 @@
             text: "empty object",
             disableMonitor: true,
             arguments: {},
-            isExpandableBlock: true,
-            expandableArguments: [
-              [
-                false,
-                1,
-                [
-                  [
-                    'BEGIN',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return 'object {';
-                      else return 'empty object'
-                    }
-                  ]
-                ]
-              ],
-              [
-                true,
-                0,
-                [
-                  [
-                    "KEY",
-                    'string',
-                    function (index, length) {
-                      return `key${index}`;
-                    }
-                  ],
-                  [
-                    "TO",
-                    'text',
-                    ':'
-                  ],
-                  [
-                    "VALUE",
-                    'string',
-                    function (index, length) {
-                      return `value${index}`;
-                    }
-                  ],
-                  [
-                    "GAP",
-                    'text',
-                    function (index, length) {
-                      if (index < length[1] - 1) return ',';
-                      else return ''
-                    }
-                  ]
-                ]
-              ],
-              [
-                false,
-                1,
-                [
-                  [
-                    'END',
-                    'text',
-                    function (index, length) {
-                      if (length[1] > 0) return '}';
-                      else return ''
-                    }
-                  ]
-                ]
-              ],
-            ],
+            expandableBlock: {
+              expandableArgs: {
+                'KEY': ['string', 'key'],
+                'TEXT': ['text', ':', 1],
+                'VAL': ['string', 'value'],
+                'TEXT2': ['text', ',', 0],
+              },
+              defaultText: ['empty object', 'object:'],
+              textBegin: '{',
+              textEnd: '}'
+            }
+
+          },
+          {
+            opcode: "broadcastWithData",
+            blockType: Scratch.BlockType.COMMAND,
+            text: "broadcast [BROADCAST_OPTION] with empty data",
+            arguments: {
+              BROADCAST_OPTION: {
+                type: Scratch.ArgumentType.STRING,
+                defaultValue: "broadcast",
+              },
+            },
+            expandableBlock: {
+              expandableArgs: {
+                'DATA': ['string', 'data'],
+                'TEXT': ['text', ':', 1],
+                'VAL': ['string', 'value'],
+                'TEXT2': ['text', ',', 0],
+              },
+              defaultIndex: 1,
+              defaultText: ['with empty data', 'with data:'],
+              textBegin: '',
+              textEnd: ''
+            }
+
+          },
+          {
+            opcode: "receivedData",
+            blockType: Scratch.BlockType.REPORTER,
+            allowDropAnywhere: true,
+            disableMonitor: true,
+            text: "received data",
+          },
+          {
+            opcode: "if",
+            blockType: Scratch.BlockType.CONDITIONAL,
+            text: "if",
+            branchCount: 0,
+            expandableBlock: {
+              expandableArgs: {
+                'IF': ['text', ['', 'else if'], 1],
+                'BOOL': ['boolean'],
+                'SUBSTACK': ['substack'],
+              },
+              textBegin: '',
+              textEnd: ''
+            }
           },
         ],
-        menus: {},
+        menus: {
+          "arit.List": {
+            items: ["+", "-", "*", "/", "**", "//", "%"],
+          },
+        },
       };
+    }
+
+    _broadcast(name, data, util) {
+      if (!name) return [];
+      let startedThreads = [];
+      startedThreads = [
+        ...util.startHats("event_whenbroadcastreceived", {
+          BROADCAST_OPTION: name,
+        }),
+      ];
+      if (data)
+        startedThreads.forEach((thread) => (thread.receivedData = data));
+      return startedThreads;
+    }
+    toNum(val) {
+      return isNaN(Number(val)) ? 0 : Number(val);
     }
 
     connect(args) {
       let string = '',
-        i;
-
-      i = 0;
-      while (args[`INPUT_${i}`]) {
-        string += String(args[`INPUT_${i}`]);
+        i = 1;
+      while (args[`ADD_${i}`]) {
+        string += String(args[`ADD_${i}`]);
         i++;
       }
-
       return string;
     }
-    connectTwo(args) {
-      let string = '',
-        i;
-
-      i = 0;
-      while (args[`INPUT_${i}`]) {
-        string += String(args[`INPUT_${i}`]);
+    arit(args) {
+      let operList = [],
+        num = this.toNum(args.DEFAULT),
+        num2,
+        num3,
+        oper;
+      operList.push([args.OPER, args.DEFAULT2]);
+      let i = 1;
+      while (args[`OPER_${i}`]) {
+        operList.push([
+          args[`OPER_${i}`],
+          args[`ADD_${i}`],
+        ]);
         i++;
       }
-
-      string += ' ';
-
-      i = 0;
-      while (args[`INPUTT_${i}`]) {
-        string += String(args[`INPUTT_${i}`]);
-        i++;
+      for (let i = 0; i < operList.length; i++) {
+        (num2 = this.toNum(operList[i][1])), (oper = operList[i][0]), num3;
+        if (oper === "+") num3 = num + num2;
+        else if (oper === "-") num3 = num - num2;
+        else if (oper === "*") num3 = num * num2;
+        else if (oper === "/") num3 = num / num2;
+        else if (oper === "**") num3 = num ** num2;
+        else if (oper === "//") num3 = Math.floor(num / num2);
+        else if (oper === "%") num3 = num % num2;
+        num = num3;
       }
-
-      return string;
-    }
-    connectOptions(args) {
-      let string = '',
-        i;
-
-      i = 0;
-      while (args[`INPUT_${i}`]) {
-        string += String(args[`INPUT_${i}`]);
-        i++;
-      }
-
-      return string;
+      return num;
     }
     array(args) {
       let array = [],
-        i;
-
-      i = 0;
-      while (args[`VALUE_${i}`]) {
-        array.push(args[`VALUE_${i}`]);
+        i = 1;
+      while (args[`VAL_${i}`]) {
+        array.push(args[`VAL_${i}`]);
         i++;
       }
-
       return JSON.stringify(array);
     }
-
     object(args) {
       let object = {},
-        i;
-
-      i = 0;
+        i = 1;
       while (args[`KEY_${i}`]) {
         object[String(args[`KEY_${i}`])] =
-          args[`VALUE_${i}`];
+          args[`VAL_${i}`];
         i++;
       }
-
       return JSON.stringify(object);
+    }
+    broadcastWithData(args, util) {
+      let object = {},
+        i = 1;
+      while (args[`DATA_${i}`]) {
+        object[args[`DATA_${i}`]] =
+          args[`VAL_${i}`];
+        i++;
+      }
+      if (!util.stackFrame.broadcastVar)
+        util.stackFrame.broadcastVar = Scratch.Cast.toString(
+          args.BROADCAST_OPTION
+        );
+      const data = JSON.stringify(object);
+      if (util.stackFrame.broadcastVar) {
+        const name = util.stackFrame.broadcastVar;
+        if (!util.stackFrame.startedThreads) {
+          util.stackFrame.startedThreads = this._broadcast(name, data, util);
+          if (util.stackFrame.startedThreads.length === 0) return;
+        }
+      }
+    }
+    receivedData(args, util) {
+      const received = util.thread.receivedData;
+      return received ? received : "";
+    }
+    if(args, util) {
+      let i = 1;
+      while (args[`BOOL_${i}`]) {
+        if (args[`BOOL_${i}`]) {
+          util.startBranch(i);
+          return;
+        }
+        i++;
+      }
     }
   }
   Scratch.extensions.register(new ExpandableBlocksExample());
