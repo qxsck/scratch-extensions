@@ -31,7 +31,7 @@
   const setExpandableBlocks = ((runtime, extension) => {
     if (expandableBlockInit) return;
     expandableBlockInit = true;
-    // 在编辑器获取scratchBlocks与获取VM的方法来自 https://github.com/FurryR/lpp-scratch 的LPP扩展
+    // 在编辑器获取scratchBlocks与获取VM的方法来自https://github.com/FurryR/lpp-scratch
     const hijack = (fn) => {
       const _orig = Function.prototype.apply;
       Function.prototype.apply = (thisArg) => thisArg;
@@ -176,6 +176,7 @@
           let wasRendered = this.rendered;
           this.rendered = false;
 
+          this.oldItemCount=this.itemCount_;
           // 更新参数
           Blockly.Events.setGroup(true);
           // 先记录现在的 mutation
@@ -199,9 +200,10 @@
                   canEndInput = expandableArgs[inputKey][2] || 0;
 
                 input =
-                  type === "substack"
-                    ? this.appendStatementInput(inputKeyID)
-                    : type === "list" || type === "text"
+                  // type === "substack"
+                  //   ? this.appendStatementInput(inputKeyID)
+                  //   :
+                    type === "list" || type === "text"
                       ? this.appendDummyInput(inputKeyID)
                       : this.appendValueInput(inputKeyID);
                 if (type === "text") {
@@ -224,8 +226,8 @@
                     };
                   }
                   this.moveInputBefore(inputKeyID, "END");
-                } else if (type === "substack") {
-                  input.setCheck(null);
+                // } else if (type === "substack") {
+                //   input.setCheck(null);
                 } else {
                   this.attachShadow_(
                     input,
@@ -240,63 +242,63 @@
           if (runtime._editingTarget) {
             // 移除 input 并记录
 
-            if (this.getInput('SUBSTACK')) {
-              try {
-                const blocks = runtime._editingTarget.blocks;
-                const targetBlock = blocks.getBlock(this.id);
-                const input = targetBlock.inputs['SUBSTACK'];
-                if (input) {
-                  if (input.block !== null) {
-                    const blockInInput = targetBlock.getBlock(input.block);
-                    blockInInput.topLevel = true;
-                    blockInInput.parent = null;
-                    blocks.moveBlock({
-                      id: blockInInput.id,
-                      oldParent: this.id,
-                      oldInput: 'SUBSTACK',
-                      newParent: undefined,
-                      newInput: undefined,
-                    });
-                  }
-                  if (input.shadow !== null && input.shadow == input.block) {
-                    blocks.deleteBlock(input.shadow);
-                  }
-                }
-                this.removeInput('SUBSTACK');
-                delete targetBlock.inputs['SUBSTACK'];
-              } catch {
-                // nothing
-              }
-            }
+            // if (this.getInput('SUBSTACK')) {
+            //   try {
+            //     const blocks = runtime._editingTarget.blocks;
+            //     const targetBlock = blocks.getBlock(this.id);
+            //     const input = targetBlock.inputs['SUBSTACK'];
+            //     if (input) {
+            //       if (input.block !== null) {
+            //         const blockInInput = targetBlock.getBlock(input.block);
+            //         blockInInput.topLevel = true;
+            //         blockInInput.parent = null;
+            //         blocks.moveBlock({
+            //           id: blockInInput.id,
+            //           oldParent: this.id,
+            //           oldInput: 'SUBSTACK',
+            //           newParent: undefined,
+            //           newInput: undefined,
+            //         });
+            //       }
+            //       if (input.shadow !== null && input.shadow == input.block) {
+            //         blocks.deleteBlock(input.shadow);
+            //       }
+            //     }
+            //     this.removeInput('SUBSTACK');
+            //     delete targetBlock.inputs['SUBSTACK'];
+            //   } catch {
+            //     // nothing
+            //   }
+            // }
 
-            if (this.getInput('SUBSTACK')) {
-              try {
-                const blocks = runtime._editingTarget.blocks;
-                const targetBlock = blocks.getBlock(this.id);
-                const input = targetBlock.inputs['SUBSTACK'];
-                if (input) {
-                  if (input.block !== null) {
-                    const blockInInput = targetBlock.getBlock(input.block);
-                    blockInInput.topLevel = true;
-                    blockInInput.parent = null;
-                    blocks.moveBlock({
-                      id: blockInInput.id,
-                      oldParent: this.id,
-                      oldInput: 'SUBSTACK',
-                      newParent: undefined,
-                      newInput: undefined,
-                    });
-                  }
-                  if (input.shadow !== null && input.shadow == input.block) {
-                    blocks.deleteBlock(input.shadow);
-                  }
-                }
-                this.removeInput('SUBSTACK');
-                delete targetBlock.inputs['SUBSTACK'];
-              } catch {
-                // nothing
-              }
-            }
+            // if (this.getInput('SUBSTACK')) {
+            //   try {
+            //     const blocks = runtime._editingTarget.blocks;
+            //     const targetBlock = blocks.getBlock(this.id);
+            //     const input = targetBlock.inputs['SUBSTACK'];
+            //     if (input) {
+            //       if (input.block !== null) {
+            //         const blockInInput = targetBlock.getBlock(input.block);
+            //         blockInInput.topLevel = true;
+            //         blockInInput.parent = null;
+            //         blocks.moveBlock({
+            //           id: blockInInput.id,
+            //           oldParent: this.id,
+            //           oldInput: 'SUBSTACK',
+            //           newParent: undefined,
+            //           newInput: undefined,
+            //         });
+            //       }
+            //       if (input.shadow !== null && input.shadow == input.block) {
+            //         blocks.deleteBlock(input.shadow);
+            //       }
+            //     }
+            //     this.removeInput('SUBSTACK');
+            //     delete targetBlock.inputs['SUBSTACK'];
+            //   } catch {
+            //     // nothing
+            //   }
+            // }
 
             let iTemp = i;
             for (let j = 0; j < inputKeys.length; j++) {
@@ -493,6 +495,7 @@
         },
         init: function (type) {
           // 积木初始化
+          //this.inputList=[];
           this.itemCount_ = 0;
           this.oldItemCount = this.itemCount_;
           this.opcode_ = type.opcode;
@@ -540,17 +543,6 @@
             expandableAttr.init.call(this, expandableBlocks[property]);
           };
         }
-
-        // if (property == "sb_CreporterRun") {
-        //   const orgInit = value.init;
-        //   value.init = function () {
-        //     // 先用原本的 init
-        //     orgInit.call(this);
-        //     // 你要搞的999神秘的事情
-        //     this.setOutputShape(Blockly.OUTPUT_SHAPE_SQUARE);
-        //   };
-        // }
-        //保证C型reporter积木样式正常
         return Reflect.set(target, property, value);
       },
     });
@@ -588,7 +580,7 @@
                 'TEXT': ['text', ',', 0],
                 'ADD': ['string', 'text'],
               },
-              defaultText: ['connect', 'connect:'],
+              defaultText: ['connect', 'connect'],
               textBegin: '',
               textEnd: ''
             },
@@ -643,7 +635,7 @@
                 'VAL': ['string', 'value'],
                 'TEXT': ['text', ',', 0],
               },
-              defaultText: ['empty array', 'array:'],
+              defaultText: ['empty array', 'array '],
               textBegin: '[',
               textEnd: ']'
             }
@@ -662,7 +654,7 @@
                 'VAL': ['string', 'value'],
                 'TEXT2': ['text', ',', 0],
               },
-              defaultText: ['empty object', 'object:'],
+              defaultText: ['empty object', 'object '],
               textBegin: '{',
               textEnd: '}'
             }
@@ -699,21 +691,21 @@
             disableMonitor: true,
             text: "received data",
           },
-          {
-            opcode: "if",
-            blockType: Scratch.BlockType.CONDITIONAL,
-            text: "if",
-            branchCount: 0,
-            expandableBlock: {
-              expandableArgs: {
-                'IF': ['text', ['', 'else if'], 1],
-                'BOOL': ['boolean'],
-                'SUBSTACK': ['substack'],
-              },
-              textBegin: '',
-              textEnd: ''
-            }
-          },
+          // {
+          //   opcode: "if",
+          //   blockType: Scratch.BlockType.CONDITIONAL,
+          //   text: "if",
+          //   branchCount: 0,
+          //   expandableBlock: {
+          //     expandableArgs: {
+          //       'IF': ['text', ['', 'else if'], 1],
+          //       'BOOL': ['boolean'],
+          //       'SUBSTACK': ['substack'],
+          //     },
+          //     textBegin: '',
+          //     textEnd: ''
+          //   }
+          // },
         ],
         menus: {
           "arit.List": {
@@ -820,16 +812,16 @@
       const received = util.thread.receivedData;
       return received ? received : "";
     }
-    if(args, util) {
-      let i = 1;
-      while (args[`BOOL_${i}`]) {
-        if (args[`BOOL_${i}`]) {
-          util.startBranch(i);
-          return;
-        }
-        i++;
-      }
-    }
+    // if(args, util) {
+    //   let i = 1;
+    //   while (args[`BOOL_${i}`]) {
+    //     if (args[`BOOL_${i}`]) {
+    //       util.startBranch(i);
+    //       return;
+    //     }
+    //     i++;
+    //   }
+    // }
   }
   Scratch.extensions.register(new ExpandableBlocksExample());
 })(Scratch);
