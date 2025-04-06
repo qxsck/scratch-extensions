@@ -4,11 +4,11 @@ My scratch extensions:
 2. string manipulation
 3. data analysis
 4. variable and list
-5. extension for compatible xmw community extension
+5. extension for compatible xiaoma community extension
 6. easy struct
 7. matrix
 8. lazy music (no English translate)
 9. big number
-10. extension for compatible xmw's project enhance extension
+10. extension for compatible xiaoma project enhance extension
 11. string
 12. [example] expandable block
