@@ -10,3 +10,5 @@ My scratch extensions:
 8. lazy music (no English translate)
 9. big number
 10. extension for compatible xmw's project enhance extension
+11. string
+12. [example] expandable block
