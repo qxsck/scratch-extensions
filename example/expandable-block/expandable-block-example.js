@@ -486,7 +486,6 @@
           {
             opcode: "connect",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
             disableMonitor: true,
             isExpandableBlock: true,
             expandableArguments: [
@@ -522,7 +521,6 @@
           {
             opcode: "connectTwo",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
             disableMonitor: true,
             isExpandableBlock: true,
             expandableArguments: [
@@ -571,7 +569,6 @@
           {
             opcode: "connectOptions",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
             disableMonitor: true,
             isExpandableBlock: true,
             expandableArguments: [
@@ -609,9 +606,7 @@
           {
             opcode: "array",
             blockType: Scratch.BlockType.REPORTER,
-            text: "",
             disableMonitor: true,
-            arguments: {},
             isExpandableBlock: true,
             expandableArguments: [
               [
@@ -668,9 +663,7 @@
           {
             opcode: "object",
             blockType: Scratch.BlockType.REPORTER,
-            text: "empty object",
             disableMonitor: true,
-            arguments: {},
             isExpandableBlock: true,
             expandableArguments: [
               [
